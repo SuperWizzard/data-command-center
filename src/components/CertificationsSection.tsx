@@ -1,9 +1,11 @@
 import { motion } from "framer-motion";
-import { Award } from "lucide-react";
+import { Award, ExternalLink } from "lucide-react";
 
 const certs = [
-  { title: "Udacity Data Analysis Nano Degree", org: "Udacity" },
-  { title: "Analytics Certificate", org: "Upload your certificates" },
+  { title: "Data Analysis Nano Degree", org: "Udacity", url: "https://s3-us-west-2.amazonaws.com/udacity-printer/production/certificates/2a3ac4a9-f7cf-455f-a438-8520fedd4ba4.pdf" },
+  { title: "Understanding Data Visualization", org: "DataCamp", url: "https://www.datacamp.com/statement-of-accomplishment/course/bae3db506d1df1cafaa39c0034af628f940bce01?raw=1" },
+  { title: "Intermediate SQL", org: "DataCamp", url: "https://www.datacamp.com/statement-of-accomplishment/course/bf326c4747784867fc86f99a493f383fa273bd40?raw=1" },
+  { title: "Introduction to Data Science in Python", org: "DataCamp", url: "https://www.datacamp.com/statement-of-accomplishment/course/d69e5002011e2121c3e990db9ac6404d657def96?raw=1" },
 ];
 
 const CertificationsSection = () => {
@@ -35,7 +37,16 @@ const CertificationsSection = () => {
                 <Award className="w-8 h-8 text-primary" />
               </div>
               <h3 className="font-semibold mb-1">{cert.title}</h3>
-              <p className="text-sm text-muted-foreground">{cert.org}</p>
+              <p className="text-sm text-muted-foreground mb-3">{cert.org}</p>
+              <a
+                href={cert.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline"
+              >
+                <ExternalLink className="w-3.5 h-3.5" />
+                View Certificate
+              </a>
             </motion.div>
           ))}
         </div>
