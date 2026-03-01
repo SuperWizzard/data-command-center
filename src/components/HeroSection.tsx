@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { ArrowDown, Download } from "lucide-react";
 import heroBg from "@/assets/hero-bg.jpg";
+import profilePic from "@/assets/profile-picture.png";
 
 const HeroSection = () => {
   return (
@@ -23,7 +24,7 @@ const HeroSection = () => {
             <div className="w-48 h-48 lg:w-56 lg:h-56 rounded-full border-2 border-primary/30 bg-secondary flex items-center justify-center overflow-hidden"
               style={{ boxShadow: "var(--shadow-blue)" }}
             >
-              <span className="text-muted-foreground text-sm font-mono text-center px-4">Upload Photo</span>
+              <img src={profilePic} alt="Sobhe Mosaad" className="w-full h-full object-cover" />
             </div>
           </motion.div>
 
@@ -89,7 +90,8 @@ const HeroSection = () => {
                 View Analytical Work
               </a>
               <a
-                href="#"
+                href="/Sobhe_Mosaad_Resume.pdf"
+                download
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold border border-border text-foreground bg-secondary hover:bg-muted transition-all duration-300"
               >
                 <Download className="w-4 h-4" />

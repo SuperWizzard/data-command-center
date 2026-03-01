@@ -19,7 +19,7 @@ const FooterSection = () => {
 
           <div className="flex flex-wrap justify-center gap-4 mb-12">
             <a
-              href="https://linkedin.com"
+              href="https://www.linkedin.com/in/sobhe-mosaad/"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-5 py-3 rounded-lg border border-border bg-card hover:border-primary/50 transition-all duration-300 text-sm font-medium"
@@ -28,14 +28,15 @@ const FooterSection = () => {
               LinkedIn
             </a>
             <a
-              href="mailto:your@email.com"
+              href="mailto:sobhemosaad@gmail.com"
               className="inline-flex items-center gap-2 px-5 py-3 rounded-lg border border-border bg-card hover:border-primary/50 transition-all duration-300 text-sm font-medium"
             >
               <Mail className="w-4 h-4 text-primary" />
               Email
             </a>
             <a
-              href="#"
+              href="/Sobhe_Mosaad_Resume.pdf"
+              download
               className="inline-flex items-center gap-2 px-5 py-3 rounded-lg font-medium text-primary-foreground transition-all duration-300 hover:brightness-110 text-sm"
               style={{ background: "var(--gradient-blue)" }}
             >
