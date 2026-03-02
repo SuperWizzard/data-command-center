@@ -2,27 +2,42 @@ import { motion, useInView } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 
 const metrics = [
-  { value: "5+", label: "Years in Data Analytics" },
-  { value: "10+", label: "Forecast Models Built" },
-  { value: "15+", label: "Automated Reporting Systems" },
-  { value: "50+", label: "Large-Scale Datasets Optimized" },
+  { value: 5, suffix: "+", label: "Years in Data Analytics" },
+  { value: 10, suffix: "+", label: "Forecast Models Built" },
+  { value: 15, suffix: "+", label: "Automated Reporting Systems" },
+  { value: 50, suffix: "+", label: "Large-Scale Datasets Optimized" },
 ];
 
-const AnimatedValue = ({ value }: { value: string }) => {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
-  const [show, setShow] = useState(false);
+const AnimatedValue = ({ value, suffix }: { value: number; suffix: string }) => {
+  const ref = useRef<HTMLSpanElement | null>(null);
+  const isInView = useInView(ref, { once: true, amount: 0.6 });
+  const [displayValue, setDisplayValue] = useState(0);
 
   useEffect(() => {
-    if (isInView) {
-      const t = setTimeout(() => setShow(true), 600);
-      return () => clearTimeout(t);
-    }
-  }, [isInView]);
+    if (!isInView) return;
+
+    const duration = 1800;
+    const steps = 72;
+    const stepDuration = duration / steps;
+    let step = 0;
+
+    const timer = window.setInterval(() => {
+      step += 1;
+      const progress = Math.min(step / steps, 1);
+      setDisplayValue(Math.round(value * progress));
+
+      if (progress >= 1) {
+        window.clearInterval(timer);
+      }
+    }, stepDuration);
+
+    return () => window.clearInterval(timer);
+  }, [isInView, value]);
 
   return (
     <span ref={ref} className="gradient-text text-5xl md:text-6xl font-bold font-mono metric-glow">
-      {show ? value : "—"}
+      {displayValue}
+      {suffix}
     </span>
   );
 };
@@ -52,7 +67,7 @@ const MetricsSection = () => {
               transition={{ duration: 0.4, delay: i * 0.1 }}
               className="text-center"
             >
-              <AnimatedValue value={m.value} />
+              <AnimatedValue value={m.value} suffix={m.suffix} />
               <p className="text-sm text-muted-foreground mt-3 leading-snug">{m.label}</p>
             </motion.div>
           ))}
