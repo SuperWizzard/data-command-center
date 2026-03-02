@@ -15,7 +15,7 @@ const AnimatedValue = ({ value }: { value: string }) => {
 
   useEffect(() => {
     if (isInView) {
-      const t = setTimeout(() => setShow(true), 200);
+      const t = setTimeout(() => setShow(true), 600);
       return () => clearTimeout(t);
     }
   }, [isInView]);
