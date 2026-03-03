@@ -1,9 +1,9 @@
 import { motion } from "framer-motion";
 
 const techs = [
-  "SQL", "Excel", "BigQuery", "Python", "Google Apps Script",
-  "JavaScript", "APIs", "Tableau", "Salesforce", "Data Modeling",
-  "Forecasting", "Workforce Management Systems",
+  "SQL", "Excel", "BigQuery", "Google Apps Script",
+  "JavaScript", "APIs", "Power BI", "NiCE IEX", "Salesforce", "Data Modeling",
+  "Forecasting", "Workforce Management Systems", "Python",
 ];
 
 const TechStackSection = () => {

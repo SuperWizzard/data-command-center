@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Briefcase, Cpu, Database, Gamepad2 } from "lucide-react";
+import { Briefcase, Cpu, Database, Gamepad2, Monitor } from "lucide-react";
 
 const experiences = [
   {
@@ -27,6 +27,16 @@ const experiences = [
     ],
   },
   {
+    icon: Monitor,
+    title: "WFM System Implementation — NiCE IEX",
+    items: [
+      "System migration from Injixo/Pepoleware to NiCE IEX",
+      "Integration architecture & cross-platform alignment",
+      "Data migration & validation",
+      "Workflow mapping & process optimization",
+    ],
+  },
+  {
     icon: Cpu,
     title: "Automation Engineering",
     items: [
@@ -42,6 +52,8 @@ const experiences = [
       "Database design & normalization",
       "Query optimization & performance tuning",
       "Structured data modeling",
+      "Report extraction & automated reporting",
+      "Analytical report design & structuring",
     ],
   },
   {
