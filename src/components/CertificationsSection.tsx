@@ -5,7 +5,7 @@ import datacampLogo from "@/assets/datacamp-logo.jpg";
 
 const certs = [
   { title: "Data Analysis Nano Degree", org: "Udacity", logo: udacityLogo, url: "https://s3-us-west-2.amazonaws.com/udacity-printer/production/certificates/2a3ac4a9-f7cf-455f-a438-8520fedd4ba4.pdf" },
-  { title: "Data Analysis Professional", org: "Udacity", logo: udacityLogo, url: "https://s3-us-west-2.amazonaws.com/udacity-printer/production/certificates/8277317a-7c5d-4955-ad3e-f454321aab82.pdf" },
+  { title: "Data Challenger Track", org: "Udacity", logo: udacityLogo, url: "https://s3-us-west-2.amazonaws.com/udacity-printer/production/certificates/8277317a-7c5d-4955-ad3e-f454321aab82.pdf" },
   { title: "Understanding Data Visualization", org: "DataCamp", logo: datacampLogo, url: "https://www.datacamp.com/statement-of-accomplishment/course/bae3db506d1df1cafaa39c0034af628f940bce01?raw=1" },
   { title: "Intermediate SQL", org: "DataCamp", logo: datacampLogo, url: "https://www.datacamp.com/statement-of-accomplishment/course/bf326c4747784867fc86f99a493f383fa273bd40?raw=1" },
   { title: "Introduction to Data Science in Python", org: "DataCamp", logo: datacampLogo, url: "https://www.datacamp.com/statement-of-accomplishment/course/d69e5002011e2121c3e990db9ac6404d657def96?raw=1" },

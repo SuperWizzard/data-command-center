@@ -1,14 +1,14 @@
 import { motion } from "framer-motion";
 import { ArrowDown, Download } from "lucide-react";
-import heroBg from "@/assets/hero-bg.jpg";
 import profilePic from "@/assets/profile-picture.png";
+import ParticleBackground from "./ParticleBackground";
 
 const HeroSection = () => {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background */}
-      <div className="absolute inset-0">
-        <img src={heroBg} alt="" className="w-full h-full object-cover opacity-40" />
+      <div className="absolute inset-0 bg-background">
+        <ParticleBackground />
         <div className="absolute inset-0" style={{ background: "var(--gradient-hero)" }} />
       </div>
 
