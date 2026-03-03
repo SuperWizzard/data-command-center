@@ -3,9 +3,10 @@ import { useRef, useState, useEffect } from "react";
 
 const metrics = [
   { value: 5, suffix: "+", label: "Years in Data Analytics" },
-  { value: 10, suffix: "+", label: "Forecast Models Built" },
+  { value: 5, suffix: "+", label: "Forecast Models Built" },
   { value: 15, suffix: "+", label: "Automated Reporting Systems" },
   { value: 50, suffix: "+", label: "Large-Scale Datasets Optimized" },
+  { value: 10, suffix: "+", label: "Scheduling Models Designed" },
 ];
 
 const AnimatedValue = ({ value, suffix }: { value: number; suffix: string }) => {
