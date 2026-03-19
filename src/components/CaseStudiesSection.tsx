@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import { Activity, BarChart3, Cpu, Gamepad2 } from "lucide-react";
+import { Activity, BarChart3, Cpu, Gamepad2, ExternalLink } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const studies = [
   {
@@ -88,6 +89,27 @@ const CaseStudiesSection = () => {
             </motion.div>
           ))}
         </div>
+
+        {/* See My Work CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="mt-12 text-center"
+        >
+          <Link
+            to="/bikeshare"
+            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-lg font-semibold text-primary-foreground transition-all duration-300 hover:brightness-110 hover:scale-[1.02]"
+            style={{ background: "var(--gradient-blue)" }}
+          >
+            <ExternalLink className="w-4 h-4" />
+            See My Interactive Work — Bikeshare Data Explorer
+          </Link>
+          <p className="text-xs text-muted-foreground mt-3">
+            Python case study rebuilt as a live, interactive browser experience
+          </p>
+        </motion.div>
       </div>
     </section>
   );
