@@ -3,11 +3,20 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Clock, MapPin, Timer, Users, BarChart3, Bike } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell, Legend,
+} from "recharts";
+import {
   CITIES, MONTHS, DAYS,
   getFilteredData, computeTimeStats, computeStationStats,
   computeDurationStats, computeUserStats, formatDuration,
   type City,
 } from "@/lib/bikeshareData";
+
+const CHART_COLORS = [
+  "hsl(215, 90%, 58%)", "hsl(200, 85%, 45%)", "hsl(180, 70%, 45%)",
+  "hsl(260, 60%, 55%)", "hsl(340, 65%, 55%)", "hsl(30, 80%, 55%)",
+];
 
 const StatCard = ({ icon: Icon, title, children }: { icon: any; title: string; children: React.ReactNode }) => (
   <motion.div
@@ -32,14 +41,19 @@ const StatRow = ({ label, value }: { label: string; value: string | number }) =>
   </div>
 );
 
-const HourBar = ({ hour, count, max }: { hour: number; count: number; max: number }) => (
-  <div className="flex items-end gap-1" title={`${hour}:00 — ${count} trips`}>
-    <div
-      className="w-full rounded-t-sm bg-primary/70 transition-all duration-300 min-h-[2px]"
-      style={{ height: `${Math.max((count / max) * 100, 4)}%` }}
-    />
-  </div>
-);
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (!active || !payload?.length) return null;
+  return (
+    <div className="rounded-lg border border-border bg-card px-3 py-2 text-xs shadow-xl">
+      <p className="font-semibold text-foreground mb-1">{label}</p>
+      {payload.map((p: any, i: number) => (
+        <p key={i} className="text-muted-foreground">
+          {p.name}: <span className="font-mono font-semibold text-foreground">{p.value}</span>
+        </p>
+      ))}
+    </div>
+  );
+};
 
 const BikesharePage = () => {
   const [city, setCity] = useState<City>("chicago");
@@ -53,9 +67,68 @@ const BikesharePage = () => {
   const durationStats = useMemo(() => computeDurationStats(data), [data]);
   const userStats = useMemo(() => computeUserStats(data), [data]);
 
-  const maxHourCount = timeStats
-    ? Math.max(...timeStats.hourDistribution.map((d) => d.count))
-    : 0;
+  // Chart data
+  const hourlyChartData = useMemo(() => {
+    if (!timeStats) return [];
+    return Array.from({ length: 24 }, (_, h) => {
+      const entry = timeStats.hourDistribution.find((d) => d.hour === h);
+      return { name: `${h}:00`, Trips: entry?.count || 0 };
+    });
+  }, [timeStats]);
+
+  const userTypeChartData = useMemo(() => {
+    if (!userStats) return [];
+    return [
+      { name: "Subscribers", value: userStats.subscribers },
+      { name: "Customers", value: userStats.customers },
+    ];
+  }, [userStats]);
+
+  const genderChartData = useMemo(() => {
+    if (!userStats || !userStats.hasGender) return [];
+    return [
+      { name: "Male", value: userStats.males },
+      { name: "Female", value: userStats.females },
+    ];
+  }, [userStats]);
+
+  const monthlyChartData = useMemo(() => {
+    if (!data.length) return [];
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
+    const counts: Record<number, number> = {};
+    data.forEach((t) => {
+      const m = t.startTime.getMonth();
+      counts[m] = (counts[m] || 0) + 1;
+    });
+    return monthNames.map((name, i) => ({ name, Trips: counts[i] || 0 }));
+  }, [data]);
+
+  const dayChartData = useMemo(() => {
+    if (!data.length) return [];
+    const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const counts: Record<number, number> = {};
+    data.forEach((t) => {
+      const d = t.startTime.getDay();
+      counts[d] = (counts[d] || 0) + 1;
+    });
+    return dayNames.map((name, i) => ({ name, Trips: counts[i] || 0 }));
+  }, [data]);
+
+  const stationChartData = useMemo(() => {
+    if (!data.length) return [];
+    const counts: Record<string, number> = {};
+    data.forEach((t) => {
+      counts[t.startStation] = (counts[t.startStation] || 0) + 1;
+    });
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 6)
+      .map(([name, Trips]) => ({
+        name: name.length > 20 ? name.slice(0, 18) + "…" : name,
+        fullName: name,
+        Trips,
+      }));
+  }, [data]);
 
   const selectClass =
     "bg-secondary border border-border text-foreground rounded-lg px-4 py-2.5 text-sm font-medium focus:ring-2 focus:ring-primary/50 focus:outline-none appearance-none cursor-pointer";
@@ -134,34 +207,15 @@ const BikesharePage = () => {
           </div>
         ) : (
           <>
-            {/* Stats Grid */}
+            {/* Key Stats Row */}
             <div className="grid md:grid-cols-2 gap-6 mb-8">
-              {/* Time Stats */}
               {timeStats && (
                 <StatCard icon={Clock} title="Popular Travel Times">
                   <StatRow label="Most Common Month" value={timeStats.popularMonth} />
                   <StatRow label="Most Common Day" value={timeStats.popularDay} />
                   <StatRow label="Most Common Start Hour" value={`${timeStats.popularHour}:00`} />
-
-                  {/* Hour distribution chart */}
-                  <div className="mt-4 pt-4 border-t border-border">
-                    <p className="text-xs text-muted-foreground mb-2">Hourly Trip Distribution</p>
-                    <div className="flex gap-[2px] h-20 items-end">
-                      {Array.from({ length: 24 }, (_, h) => {
-                        const entry = timeStats.hourDistribution.find((d) => d.hour === h);
-                        return <HourBar key={h} hour={h} count={entry?.count || 0} max={maxHourCount} />;
-                      })}
-                    </div>
-                    <div className="flex justify-between mt-1">
-                      <span className="text-[10px] text-muted-foreground">0h</span>
-                      <span className="text-[10px] text-muted-foreground">12h</span>
-                      <span className="text-[10px] text-muted-foreground">23h</span>
-                    </div>
-                  </div>
                 </StatCard>
               )}
-
-              {/* Station Stats */}
               {stationStats && (
                 <StatCard icon={MapPin} title="Popular Stations">
                   <StatRow label="Top Start Station" value={stationStats.popularStartStation} />
@@ -173,8 +227,6 @@ const BikesharePage = () => {
                   </div>
                 </StatCard>
               )}
-
-              {/* Duration Stats */}
               {durationStats && (
                 <StatCard icon={Timer} title="Trip Duration">
                   <StatRow label="Total Travel Time" value={formatDuration(durationStats.totalDuration)} />
@@ -184,13 +236,10 @@ const BikesharePage = () => {
                   <StatRow label="Longest Trip" value={formatDuration(durationStats.maxDuration)} />
                 </StatCard>
               )}
-
-              {/* User Stats */}
               {userStats && (
                 <StatCard icon={Users} title="User Demographics">
                   <StatRow label="Subscribers" value={`${userStats.subscribers} (${Math.round((userStats.subscribers / data.length) * 100)}%)`} />
                   <StatRow label="Customers" value={`${userStats.customers} (${Math.round((userStats.customers / data.length) * 100)}%)`} />
-
                   {userStats.hasGender && (
                     <>
                       <div className="pt-2 border-t border-border mt-1" />
@@ -202,13 +251,159 @@ const BikesharePage = () => {
                       <StatRow label="Average Birth Year" value={userStats.avgBirthYear ?? "N/A"} />
                     </>
                   )}
-
                   {!userStats.hasGender && (
                     <p className="text-xs text-muted-foreground italic">Gender & birth year data not available for Washington.</p>
                   )}
                 </StatCard>
               )}
             </div>
+
+            {/* Charts Section */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="mb-8"
+            >
+              <p className="font-mono text-primary text-sm tracking-widest uppercase mb-6">Visual Analytics</p>
+
+              {/* Hourly Distribution Bar Chart */}
+              <div className="card-glow rounded-xl border border-border p-6 mb-6">
+                <h3 className="font-semibold text-foreground mb-4">Hourly Trip Distribution</h3>
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={hourlyChartData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 14%, 18%)" />
+                      <XAxis dataKey="name" tick={{ fontSize: 10, fill: "hsl(215, 12%, 55%)" }} interval={2} />
+                      <YAxis tick={{ fontSize: 10, fill: "hsl(215, 12%, 55%)" }} />
+                      <Tooltip content={<CustomTooltip />} />
+                      <Bar dataKey="Trips" fill="hsl(215, 90%, 58%)" radius={[3, 3, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              {/* Monthly + Day of Week Charts */}
+              <div className="grid md:grid-cols-2 gap-6 mb-6">
+                <div className="card-glow rounded-xl border border-border p-6">
+                  <h3 className="font-semibold text-foreground mb-4">Trips by Month</h3>
+                  <div className="h-56">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={monthlyChartData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 14%, 18%)" />
+                        <XAxis dataKey="name" tick={{ fontSize: 11, fill: "hsl(215, 12%, 55%)" }} />
+                        <YAxis tick={{ fontSize: 10, fill: "hsl(215, 12%, 55%)" }} />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Bar dataKey="Trips" fill="hsl(200, 85%, 45%)" radius={[3, 3, 0, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+
+                <div className="card-glow rounded-xl border border-border p-6">
+                  <h3 className="font-semibold text-foreground mb-4">Trips by Day of Week</h3>
+                  <div className="h-56">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={dayChartData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 14%, 18%)" />
+                        <XAxis dataKey="name" tick={{ fontSize: 11, fill: "hsl(215, 12%, 55%)" }} />
+                        <YAxis tick={{ fontSize: 10, fill: "hsl(215, 12%, 55%)" }} />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Bar dataKey="Trips" fill="hsl(180, 70%, 45%)" radius={[3, 3, 0, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              </div>
+
+              {/* Top Stations Bar Chart */}
+              <div className="card-glow rounded-xl border border-border p-6 mb-6">
+                <h3 className="font-semibold text-foreground mb-4">Top 6 Start Stations</h3>
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={stationChartData} layout="vertical">
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 14%, 18%)" />
+                      <XAxis type="number" tick={{ fontSize: 10, fill: "hsl(215, 12%, 55%)" }} />
+                      <YAxis type="category" dataKey="name" tick={{ fontSize: 10, fill: "hsl(215, 12%, 55%)" }} width={140} />
+                      <Tooltip
+                        content={({ active, payload }) => {
+                          if (!active || !payload?.length) return null;
+                          const d = payload[0].payload;
+                          return (
+                            <div className="rounded-lg border border-border bg-card px-3 py-2 text-xs shadow-xl">
+                              <p className="font-semibold text-foreground mb-1">{d.fullName}</p>
+                              <p className="text-muted-foreground">Trips: <span className="font-mono font-semibold text-foreground">{d.Trips}</span></p>
+                            </div>
+                          );
+                        }}
+                      />
+                      <Bar dataKey="Trips" fill="hsl(260, 60%, 55%)" radius={[0, 3, 3, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              {/* Pie Charts */}
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="card-glow rounded-xl border border-border p-6">
+                  <h3 className="font-semibold text-foreground mb-4">User Type Distribution</h3>
+                  <div className="h-56">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={userTypeChartData}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={50}
+                          outerRadius={80}
+                          dataKey="value"
+                          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                          labelLine={false}
+                        >
+                          {userTypeChartData.map((_, i) => (
+                            <Cell key={i} fill={CHART_COLORS[i]} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                        <Legend
+                          formatter={(value) => <span className="text-xs text-muted-foreground">{value}</span>}
+                        />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+
+                {genderChartData.length > 0 && (
+                  <div className="card-glow rounded-xl border border-border p-6">
+                    <h3 className="font-semibold text-foreground mb-4">Gender Distribution</h3>
+                    <div className="h-56">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={genderChartData}
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={50}
+                            outerRadius={80}
+                            dataKey="value"
+                            label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                            labelLine={false}
+                          >
+                            {genderChartData.map((_, i) => (
+                              <Cell key={i} fill={CHART_COLORS[i + 2]} />
+                            ))}
+                          </Pie>
+                          <Tooltip />
+                          <Legend
+                            formatter={(value) => <span className="text-xs text-muted-foreground">{value}</span>}
+                          />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </motion.div>
 
             {/* Raw Data Toggle */}
             <motion.div
