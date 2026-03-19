@@ -47,7 +47,6 @@ const Navbar = () => {
             className="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold text-primary-foreground transition-all duration-300 hover:brightness-110 hover:scale-105"
             style={{ background: "var(--gradient-blue)" }}
           >
-            <Rocket className="w-3.5 h-3.5" />
             See My Work
           </a>
         </div>
