@@ -8,6 +8,7 @@ import NotFound from "./pages/NotFound";
 import BikesharePage from "./pages/BikesharePage";
 import SchedulingPage from "./pages/SchedulingPage";
 import WorkforcePage from "./pages/WorkforcePage";
+import ErpAnalysisPage from "./pages/ErpAnalysisPage";
 
 const queryClient = new QueryClient();
 
