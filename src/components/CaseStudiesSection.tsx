@@ -114,6 +114,14 @@ const CaseStudiesSection = () => {
             <ExternalLink className="w-4 h-4" />
             Scheduling & Performance Analysis
           </Link>
+          <Link
+            to="/workforce"
+            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-lg font-semibold text-primary-foreground transition-all duration-300 hover:brightness-110 hover:scale-[1.02]"
+            style={{ background: "var(--gradient-blue)" }}
+          >
+            <ExternalLink className="w-4 h-4" />
+            Sr. Workforce Management
+          </Link>
         </motion.div>
         <p className="text-xs text-muted-foreground mt-3 text-center">
           Interactive case studies rebuilt as live browser experiences
