@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Activity, BarChart3, Cpu, Gamepad2, ExternalLink, Sparkles, ArrowRight } from "lucide-react";
+import { Activity, BarChart3, Cpu, Gamepad2, ArrowRight, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const studies = [
@@ -52,21 +52,28 @@ const liveProjects = [
     emoji: "🚲",
     title: "Urban Mobility Analytics",
     subtitle: "Interactive city bikeshare data exploration with real-time filtering & visual insights",
-    tag: "Data Explorer",
+    tag: "Data Insights",
   },
   {
     to: "/scheduling",
     emoji: "📊",
     title: "Capacity & Scheduling Engine",
     subtitle: "Erlang-based staffing optimization with multi-country performance benchmarking",
-    tag: "Workforce Planning",
+    tag: "Workforce Intelligence",
   },
   {
     to: "/workforce",
     emoji: "🎯",
     title: "Strategic Workforce Framework",
     subtitle: "Crisis response playbook, forecasting methodology analysis & resource allocation design",
-    tag: "Operations Strategy",
+    tag: "Leadership & Strategy",
+  },
+  {
+    to: "/erp-analysis",
+    emoji: "⚙️",
+    title: "ERP Upgrade & Process Design",
+    subtitle: "End-to-end ERP migration analysis — procurement automation, promotion testing & change management",
+    tag: "Business Analysis",
   },
 ];
 
@@ -128,7 +135,7 @@ const CaseStudiesSection = () => {
             <Sparkles className="w-5 h-5 text-primary" />
           </div>
 
-          <div className="grid md:grid-cols-3 gap-5">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {liveProjects.map((project, i) => (
               <motion.div
                 key={project.to}
@@ -139,24 +146,24 @@ const CaseStudiesSection = () => {
               >
                 <Link
                   to={project.to}
-                  className="group block rounded-xl border border-border overflow-hidden transition-all duration-300 hover:border-primary/50 hover:shadow-[0_0_30px_-5px_hsl(215_90%_58%/0.25)]"
+                  className="group block rounded-xl border border-border overflow-hidden transition-all duration-300 hover:border-primary/50 hover:shadow-[0_0_30px_-5px_hsl(215_90%_58%/0.25)] h-full"
                   style={{ background: "var(--gradient-card)" }}
                 >
                   {/* Top gradient accent bar */}
                   <div className="h-1 w-full" style={{ background: "var(--gradient-blue)" }} />
 
-                  <div className="p-6">
-                    <div className="flex items-center justify-between mb-4">
+                  <div className="p-5">
+                    <div className="flex items-center justify-between mb-3">
                       <span className="text-2xl">{project.emoji}</span>
-                      <span className="text-[10px] font-mono uppercase tracking-widest text-primary bg-primary/10 px-2.5 py-1 rounded-full">
+                      <span className="text-[9px] font-mono uppercase tracking-widest text-primary bg-primary/10 px-2 py-1 rounded-full leading-none">
                         {project.tag}
                       </span>
                     </div>
 
-                    <h4 className="text-lg font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
+                    <h4 className="text-base font-bold text-foreground mb-2 group-hover:text-primary transition-colors leading-tight">
                       {project.title}
                     </h4>
-                    <p className="text-xs text-muted-foreground leading-relaxed mb-5">
+                    <p className="text-[11px] text-muted-foreground leading-relaxed mb-4">
                       {project.subtitle}
                     </p>
 
