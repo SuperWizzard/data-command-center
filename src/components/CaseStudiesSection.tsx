@@ -90,13 +90,13 @@ const CaseStudiesSection = () => {
           ))}
         </div>
 
-        {/* See My Work CTA */}
+        {/* See My Work CTAs */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="mt-12 text-center"
+          className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4"
         >
           <Link
             to="/bikeshare"
@@ -104,12 +104,20 @@ const CaseStudiesSection = () => {
             style={{ background: "var(--gradient-blue)" }}
           >
             <ExternalLink className="w-4 h-4" />
-            See My Interactive Work — Bikeshare Data Explorer
+            Bikeshare Data Explorer
           </Link>
-          <p className="text-xs text-muted-foreground mt-3">
-            Python case study rebuilt as a live, interactive browser experience
-          </p>
+          <Link
+            to="/scheduling"
+            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-lg font-semibold text-primary-foreground transition-all duration-300 hover:brightness-110 hover:scale-[1.02]"
+            style={{ background: "var(--gradient-blue)" }}
+          >
+            <ExternalLink className="w-4 h-4" />
+            Scheduling & Performance Analysis
+          </Link>
         </motion.div>
+        <p className="text-xs text-muted-foreground mt-3 text-center">
+          Interactive case studies rebuilt as live browser experiences
+        </p>
       </div>
     </section>
   );
