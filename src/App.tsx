@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import BikesharePage from "./pages/BikesharePage";
 import SchedulingPage from "./pages/SchedulingPage";
+import WorkforcePage from "./pages/WorkforcePage";
 
 const queryClient = new QueryClient();
 
