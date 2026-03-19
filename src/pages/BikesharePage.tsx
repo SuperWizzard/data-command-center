@@ -146,7 +146,7 @@ const BikesharePage = () => {
                   {/* Hour distribution chart */}
                   <div className="mt-4 pt-4 border-t border-border">
                     <p className="text-xs text-muted-foreground mb-2">Hourly Trip Distribution</p>
-                    <div className="grid grid-cols-24 gap-[2px] h-20 items-end">
+                    <div className="flex gap-[2px] h-20 items-end">
                       {Array.from({ length: 24 }, (_, h) => {
                         const entry = timeStats.hourDistribution.find((d) => d.hour === h);
                         return <HourBar key={h} hour={h} count={entry?.count || 0} max={maxHourCount} />;
