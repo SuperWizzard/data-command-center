@@ -72,7 +72,6 @@ const Navbar = () => {
               style={{ background: "var(--gradient-blue)" }}
               onClick={() => setOpen(false)}
             >
-              <Rocket className="w-3.5 h-3.5" />
               See My Work
             </a>
           </div>
