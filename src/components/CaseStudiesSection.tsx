@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Activity, BarChart3, Cpu, Gamepad2, ExternalLink } from "lucide-react";
+import { Activity, BarChart3, Cpu, Gamepad2, ExternalLink, Sparkles, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const studies = [
@@ -43,6 +43,30 @@ const studies = [
       "Structured player progression, inventory & transactional data schemas",
       "Built backend logic for player engagement tracking & economy balancing",
     ],
+  },
+];
+
+const liveProjects = [
+  {
+    to: "/bikeshare",
+    emoji: "🚲",
+    title: "Urban Mobility Analytics",
+    subtitle: "Interactive city bikeshare data exploration with real-time filtering & visual insights",
+    tag: "Data Explorer",
+  },
+  {
+    to: "/scheduling",
+    emoji: "📊",
+    title: "Capacity & Scheduling Engine",
+    subtitle: "Erlang-based staffing optimization with multi-country performance benchmarking",
+    tag: "Workforce Planning",
+  },
+  {
+    to: "/workforce",
+    emoji: "🎯",
+    title: "Strategic Workforce Framework",
+    subtitle: "Crisis response playbook, forecasting methodology analysis & resource allocation design",
+    tag: "Operations Strategy",
   },
 ];
 
@@ -90,42 +114,66 @@ const CaseStudiesSection = () => {
           ))}
         </div>
 
-        {/* See My Work CTAs */}
+        {/* Live Interactive Projects */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4"
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="mt-16"
         >
-          <Link
-            to="/bikeshare"
-            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-lg font-semibold text-primary-foreground transition-all duration-300 hover:brightness-110 hover:scale-[1.02]"
-            style={{ background: "var(--gradient-blue)" }}
-          >
-            <ExternalLink className="w-4 h-4" />
-            Bikeshare Data Explorer
-          </Link>
-          <Link
-            to="/scheduling"
-            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-lg font-semibold text-primary-foreground transition-all duration-300 hover:brightness-110 hover:scale-[1.02]"
-            style={{ background: "var(--gradient-blue)" }}
-          >
-            <ExternalLink className="w-4 h-4" />
-            Scheduling & Performance Analysis
-          </Link>
-          <Link
-            to="/workforce"
-            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-lg font-semibold text-primary-foreground transition-all duration-300 hover:brightness-110 hover:scale-[1.02]"
-            style={{ background: "var(--gradient-blue)" }}
-          >
-            <ExternalLink className="w-4 h-4" />
-            Sr. Workforce Management
-          </Link>
+          <div className="flex items-center gap-3 mb-8 justify-center">
+            <Sparkles className="w-5 h-5 text-primary" />
+            <h3 className="text-xl md:text-2xl font-bold text-foreground">Explore Live Projects</h3>
+            <Sparkles className="w-5 h-5 text-primary" />
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-5">
+            {liveProjects.map((project, i) => (
+              <motion.div
+                key={project.to}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: 0.3 + i * 0.1 }}
+              >
+                <Link
+                  to={project.to}
+                  className="group block rounded-xl border border-border overflow-hidden transition-all duration-300 hover:border-primary/50 hover:shadow-[0_0_30px_-5px_hsl(215_90%_58%/0.25)]"
+                  style={{ background: "var(--gradient-card)" }}
+                >
+                  {/* Top gradient accent bar */}
+                  <div className="h-1 w-full" style={{ background: "var(--gradient-blue)" }} />
+
+                  <div className="p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="text-2xl">{project.emoji}</span>
+                      <span className="text-[10px] font-mono uppercase tracking-widest text-primary bg-primary/10 px-2.5 py-1 rounded-full">
+                        {project.tag}
+                      </span>
+                    </div>
+
+                    <h4 className="text-lg font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
+                      {project.title}
+                    </h4>
+                    <p className="text-xs text-muted-foreground leading-relaxed mb-5">
+                      {project.subtitle}
+                    </p>
+
+                    <div className="flex items-center gap-2 text-sm font-semibold text-primary group-hover:gap-3 transition-all">
+                      <span>Explore</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+
+          <p className="text-xs text-muted-foreground mt-5 text-center">
+            Interactive case studies rebuilt as live browser experiences
+          </p>
         </motion.div>
-        <p className="text-xs text-muted-foreground mt-3 text-center">
-          Interactive case studies rebuilt as live browser experiences
-        </p>
       </div>
     </section>
   );
