@@ -160,6 +160,14 @@ const BikesharePage = () => {
             Filter by month and day of week to uncover trends in travel times, popular stations,
             trip durations, and user demographics — originally built in Python, now interactive in the browser.
           </p>
+          <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 border border-primary/20">
+            <span className="text-xs font-mono text-primary">📚</span>
+            <span className="text-xs text-muted-foreground">
+              Originally developed as a Python project during my{" "}
+              <a href="https://s3-us-west-2.amazonaws.com/udacity-printer/production/certificates/2a3ac4a9-f7cf-455f-a438-8520fedd4ba4.pdf" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Data Analysis Nano Degree</a>{" "}
+              with Udacity — rebuilt here as a live, interactive browser experience.
+            </span>
+          </div>
         </motion.div>
 
         {/* Filters */}
