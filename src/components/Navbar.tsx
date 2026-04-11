@@ -43,7 +43,7 @@ const Navbar = () => {
             </a>
           ))}
           <a
-            href="#case-studies"
+            href="#live-projects"
             className="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold text-primary-foreground transition-all duration-300 hover:brightness-110 hover:scale-105"
             style={{ background: "var(--gradient-blue)" }}
           >
@@ -67,7 +67,7 @@ const Navbar = () => {
               </a>
             ))}
             <a
-              href="#case-studies"
+              href="#live-projects"
               className="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold text-primary-foreground w-fit mt-1"
               style={{ background: "var(--gradient-blue)" }}
               onClick={() => setOpen(false)}
