@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Monitor } from "lucide-react";
+import niceLogo from "@/assets/nice-logo.png";
 import deliveryHeroLogo from "@/assets/delivery-hero-logo.png";
 import centrecomLogo from "@/assets/centrecom-logo.png";
 import sqlLogo from "@/assets/sql-logo.jpg";
@@ -39,13 +40,14 @@ const experiences: Experience[] = [
     ],
   },
   {
-    icon: Monitor,
+    logo: niceLogo,
     title: "WFM System Implementation — NiCE IEX",
     items: [
       "System migration from Injixo/Pepoleware to NiCE IEX",
       "Integration architecture & cross-platform alignment",
       "Data migration & validation",
       "Workflow mapping & process optimization",
+      "NDE PostgreSQL data extraction from complex datasets & schemas",
     ],
   },
   {
