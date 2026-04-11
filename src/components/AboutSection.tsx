@@ -1,8 +1,10 @@
 import { motion } from "framer-motion";
-import { Cpu, Gamepad2, Monitor } from "lucide-react";
+import { Monitor } from "lucide-react";
 import deliveryHeroLogo from "@/assets/delivery-hero-logo.png";
 import centrecomLogo from "@/assets/centrecom-logo.png";
 import sqlLogo from "@/assets/sql-logo.jpg";
+import silkroadLogo from "@/assets/silkroad-logo.png";
+import appscriptLogo from "@/assets/appscript-logo.png";
 
 type Experience = {
   icon?: typeof Cpu;
@@ -47,7 +49,7 @@ const experiences: Experience[] = [
     ],
   },
   {
-    icon: Cpu,
+    logo: appscriptLogo,
     title: "Automation Engineering",
     items: [
       "Google Apps Script development",
@@ -67,7 +69,7 @@ const experiences: Experience[] = [
     ],
   },
   {
-    icon: Gamepad2,
+    logo: silkroadLogo,
     title: "Game Development — MMORPG (Silkroad-Inspired)",
     items: [
       "Player data schema design",
