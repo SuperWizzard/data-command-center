@@ -7,7 +7,7 @@ import silkroadLogo from "@/assets/silkroad-logo.png";
 import appscriptLogo from "@/assets/appscript-logo.png";
 
 type Experience = {
-  icon?: typeof Cpu;
+  icon?: React.ComponentType<{ className?: string }>;
   logo?: string;
   title: string;
   items: string[];
