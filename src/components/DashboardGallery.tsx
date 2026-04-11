@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -8,6 +8,8 @@ import dash3 from "@/assets/dashboard-3.png";
 import dash4 from "@/assets/dashboard-4.png";
 import dash5 from "@/assets/dashboard-5.png";
 import dash6 from "@/assets/dashboard-6.png";
+
+const INTERVAL = 4000;
 
 const dashboards = [
   { src: dash1, alt: "Daily SLA & Offered Cases Dashboard" },
@@ -20,14 +22,35 @@ const dashboards = [
 
 const DashboardGallery = () => {
   const [current, setCurrent] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const startRef = useRef(Date.now());
 
-  const next = useCallback(() => setCurrent((c) => (c + 1) % dashboards.length), []);
-  const prev = useCallback(() => setCurrent((c) => (c - 1 + dashboards.length) % dashboards.length), []);
+  const goTo = useCallback((idx: number) => {
+    setCurrent(idx);
+    setProgress(0);
+    startRef.current = Date.now();
+  }, []);
+
+  const next = useCallback(() => goTo((current + 1) % dashboards.length), [current, goTo]);
+  const prev = useCallback(() => goTo((current - 1 + dashboards.length) % dashboards.length), [current, goTo]);
 
   useEffect(() => {
-    const timer = setInterval(next, 4000);
-    return () => clearInterval(timer);
-  }, [next]);
+    startRef.current = Date.now();
+    let raf: number;
+    const tick = () => {
+      const elapsed = Date.now() - startRef.current;
+      const pct = Math.min(elapsed / INTERVAL, 1);
+      setProgress(pct);
+      if (pct >= 1) {
+        setCurrent((c) => (c + 1) % dashboards.length);
+        startRef.current = Date.now();
+        setProgress(0);
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [current]);
 
   return (
     <section id="gallery" className="py-24">
@@ -44,6 +67,17 @@ const DashboardGallery = () => {
         </motion.div>
 
         <div className="relative max-w-5xl mx-auto group">
+          {/* Timer bar */}
+          <div className="h-1 w-full rounded-full bg-muted/30 mb-4 overflow-hidden">
+            <div
+              className="h-full rounded-full transition-none"
+              style={{
+                width: `${progress * 100}%`,
+                background: "var(--gradient-blue)",
+              }}
+            />
+          </div>
+
           {/* Image display */}
           <div className="relative overflow-hidden rounded-xl border border-border bg-card" style={{ boxShadow: "var(--shadow-card)" }}>
             <div className="relative aspect-[16/9]">
@@ -77,17 +111,24 @@ const DashboardGallery = () => {
             <ChevronRight className="w-5 h-5" />
           </button>
 
-          {/* Dots */}
-          <div className="flex justify-center gap-2 mt-4">
+          {/* Segment indicators */}
+          <div className="flex gap-1.5 mt-4">
             {dashboards.map((_, i) => (
               <button
                 key={i}
-                onClick={() => setCurrent(i)}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  i === current ? "bg-primary w-6" : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
-                }`}
+                onClick={() => goTo(i)}
+                className="relative flex-1 h-1.5 rounded-full bg-muted/20 overflow-hidden"
                 aria-label={`Go to slide ${i + 1}`}
-              />
+              >
+                <div
+                  className="absolute inset-y-0 left-0 rounded-full"
+                  style={{
+                    width: i < current ? "100%" : i === current ? `${progress * 100}%` : "0%",
+                    background: i <= current ? "var(--gradient-blue)" : "transparent",
+                    transition: i === current ? "none" : "width 0.3s",
+                  }}
+                />
+              </button>
             ))}
           </div>
 
