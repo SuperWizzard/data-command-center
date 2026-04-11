@@ -1,9 +1,19 @@
 import { motion } from "framer-motion";
-import { Briefcase, Cpu, Database, Gamepad2, Monitor } from "lucide-react";
+import { Cpu, Gamepad2, Monitor, GraduationCap } from "lucide-react";
+import deliveryHeroLogo from "@/assets/delivery-hero-logo.png";
+import centrecomLogo from "@/assets/centrecom-logo.png";
+import sqlLogo from "@/assets/sql-logo.jpg";
 
-const experiences = [
+type Experience = {
+  icon?: typeof Cpu;
+  logo?: string;
+  title: string;
+  items: string[];
+};
+
+const experiences: Experience[] = [
   {
-    icon: Briefcase,
+    logo: centrecomLogo,
     title: "Workforce Analyst — Centrecom Malta",
     items: [
       "Headcount sizing & staffing simulations",
@@ -16,7 +26,7 @@ const experiences = [
     ],
   },
   {
-    icon: Briefcase,
+    logo: deliveryHeroLogo,
     title: "Sr. Workforce Coordinator — talabat",
     items: [
       "BigQuery data extraction & analysis",
@@ -46,7 +56,7 @@ const experiences = [
     ],
   },
   {
-    icon: Database,
+    logo: sqlLogo,
     title: "SQL Database Architecture",
     items: [
       "Database design & normalization",
@@ -67,6 +77,18 @@ const experiences = [
     ],
   },
 ];
+
+const education = {
+  icon: GraduationCap,
+  title: "Bachelor of Commerce — Helwan University",
+  subtitle: "Faculty of Commerce & Business Administration",
+  details: [
+    "Major: Accounting",
+    "Graduated: 2021/2022",
+    "Strong foundation in financial analysis & reporting",
+    "Business economics & corporate accounting",
+  ],
+};
 
 const fadeInUp = {
   initial: { opacity: 0, y: 30 },
@@ -93,9 +115,15 @@ const AboutSection = () => {
               className="card-glow rounded-xl border border-border p-6"
             >
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <exp.icon className="w-5 h-5 text-primary" />
-                </div>
+                {exp.logo ? (
+                  <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center overflow-hidden p-1">
+                    <img src={exp.logo} alt="" className="w-full h-full object-contain" />
+                  </div>
+                ) : (
+                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                    {exp.icon && <exp.icon className="w-5 h-5 text-primary" />}
+                  </div>
+                )}
                 <h3 className="font-semibold text-sm leading-tight">{exp.title}</h3>
               </div>
               <ul className="space-y-2">
@@ -108,6 +136,29 @@ const AboutSection = () => {
               </ul>
             </motion.div>
           ))}
+
+          {/* Education Card */}
+          <motion.div
+            {...fadeInUp}
+            transition={{ duration: 0.5, delay: experiences.length * 0.1 }}
+            className="card-glow rounded-xl border border-primary/30 p-6 bg-gradient-to-br from-primary/5 to-transparent"
+          >
+            <div className="flex items-center gap-3 mb-1">
+              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                <GraduationCap className="w-5 h-5 text-primary" />
+              </div>
+              <h3 className="font-semibold text-sm leading-tight">{education.title}</h3>
+            </div>
+            <p className="text-xs text-primary/70 font-medium mb-4 ml-[52px]">{education.subtitle}</p>
+            <ul className="space-y-2">
+              {education.details.map((item) => (
+                <li key={item} className="flex items-start gap-2 text-sm text-muted-foreground">
+                  <span className="w-1 h-1 rounded-full bg-primary mt-2 shrink-0" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </motion.div>
         </div>
       </div>
     </section>
