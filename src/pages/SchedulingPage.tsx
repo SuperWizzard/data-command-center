@@ -53,6 +53,7 @@ const SectionTitle = ({ mono, title }: { mono: string; title: string }) => (
 );
 
 const SchedulingPage = () => {
+  useEffect(() => { window.scrollTo(0, 0); }, []);
   const [selectedDay, setSelectedDay] = useState("19-Aug");
   const [activeTab, setActiveTab] = useState<"scheduling" | "performance">("scheduling");
 

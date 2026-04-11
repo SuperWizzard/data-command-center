@@ -56,6 +56,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 const BikesharePage = () => {
+  useEffect(() => { window.scrollTo(0, 0); }, []);
   const [city, setCity] = useState<City>("chicago");
   const [month, setMonth] = useState("all");
   const [day, setDay] = useState("all");
