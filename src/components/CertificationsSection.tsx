@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, GraduationCap } from "lucide-react";
 import udacityLogo from "@/assets/udacity-logo.png";
 import datacampLogo from "@/assets/datacamp-logo.jpg";
 
@@ -22,8 +22,33 @@ const CertificationsSection = () => {
           transition={{ duration: 0.5 }}
         >
           <p className="font-mono text-primary text-sm tracking-widest uppercase mb-2">Credentials</p>
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Certifications</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Education & Certifications</h2>
           <div className="blue-line mb-12 max-w-xs" />
+        </motion.div>
+
+        {/* Education */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="mb-10 max-w-4xl"
+        >
+          <div className="card-glow rounded-xl border border-primary/30 p-6 bg-gradient-to-br from-primary/5 to-transparent flex items-center gap-5">
+            <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+              <GraduationCap className="w-7 h-7 text-primary" />
+            </div>
+            <div>
+              <h3 className="font-bold text-lg">Bachelor of Commerce — Helwan University</h3>
+              <p className="text-sm text-primary/70 font-medium">Faculty of Commerce & Business Administration</p>
+              <div className="flex flex-wrap gap-3 mt-2 text-xs text-muted-foreground">
+                <span className="px-2.5 py-1 rounded-full bg-secondary border border-border">Accounting Major</span>
+                <span className="px-2.5 py-1 rounded-full bg-secondary border border-border">Class of 2022</span>
+                <span className="px-2.5 py-1 rounded-full bg-secondary border border-border">Financial Analysis</span>
+                <span className="px-2.5 py-1 rounded-full bg-secondary border border-border">Corporate Accounting</span>
+              </div>
+            </div>
+          </div>
         </motion.div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl">
