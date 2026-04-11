@@ -8,10 +8,16 @@ const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
 
 const ChatBot = () => {
   const [open, setOpen] = useState(false);
+  const [showBubble, setShowBubble] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => { if (!open) setShowBubble(true); }, 3000);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -91,6 +97,28 @@ const ChatBot = () => {
 
   return (
     <>
+      {/* Popup bubble */}
+      <AnimatePresence>
+        {!open && showBubble && (
+          <motion.div
+            initial={{ opacity: 0, y: 10, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.9 }}
+            className="fixed bottom-[88px] right-6 z-50 bg-background border border-border rounded-xl px-4 py-2.5 shadow-lg max-w-[200px] cursor-pointer"
+            onClick={() => { setShowBubble(false); setOpen(true); }}
+          >
+            <p className="text-sm font-medium text-foreground">👋 Got questions? Ask me!</p>
+            <div className="absolute -bottom-2 right-6 w-4 h-4 bg-background border-b border-r border-border rotate-45" />
+            <button
+              onClick={(e) => { e.stopPropagation(); setShowBubble(false); }}
+              className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-muted border border-border flex items-center justify-center text-muted-foreground hover:text-foreground text-xs"
+            >
+              ×
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Floating button */}
       <AnimatePresence>
         {!open && (
@@ -98,7 +126,7 @@ const ChatBot = () => {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             exit={{ scale: 0 }}
-            onClick={() => setOpen(true)}
+            onClick={() => { setShowBubble(false); setOpen(true); }}
             className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full flex items-center justify-center text-primary-foreground shadow-lg hover:brightness-110 transition-all"
             style={{ background: "var(--gradient-blue)" }}
             aria-label="Open chat"
