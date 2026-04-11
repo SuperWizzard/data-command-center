@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowLeft, ShoppingCart, AlertTriangle, CheckCircle2, ChevronRight,
