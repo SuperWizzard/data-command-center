@@ -9,6 +9,7 @@ import BikesharePage from "./pages/BikesharePage";
 import SchedulingPage from "./pages/SchedulingPage";
 import WorkforcePage from "./pages/WorkforcePage";
 import ErpAnalysisPage from "./pages/ErpAnalysisPage";
+import ChatBot from "./components/ChatBot";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ const App = () => (
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <ChatBot />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
