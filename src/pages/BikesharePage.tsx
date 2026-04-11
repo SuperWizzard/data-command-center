@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Clock, MapPin, Timer, Users, BarChart3, Bike } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -56,6 +56,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 const BikesharePage = () => {
+  useEffect(() => { window.scrollTo(0, 0); }, []);
   const [city, setCity] = useState<City>("chicago");
   const [month, setMonth] = useState("all");
   const [day, setDay] = useState("all");

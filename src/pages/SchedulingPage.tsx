@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, Calendar, Users, Target, TrendingUp, Globe, BarChart3, Clock, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -53,6 +53,7 @@ const SectionTitle = ({ mono, title }: { mono: string; title: string }) => (
 );
 
 const SchedulingPage = () => {
+  useEffect(() => { window.scrollTo(0, 0); }, []);
   const [selectedDay, setSelectedDay] = useState("19-Aug");
   const [activeTab, setActiveTab] = useState<"scheduling" | "performance">("scheduling");
 

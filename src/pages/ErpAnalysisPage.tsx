@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowLeft, ShoppingCart, AlertTriangle, CheckCircle2, ChevronRight,
@@ -42,6 +42,7 @@ const SectionTitle = ({ mono, title }: { mono: string; title: string }) => (
 );
 
 const ErpAnalysisPage = () => {
+  useEffect(() => { window.scrollTo(0, 0); }, []);
   const [activeTab, setActiveTab] = useState<"problems" | "procurement" | "promotions" | "change">("problems");
 
   const tabClass = (tab: string) =>

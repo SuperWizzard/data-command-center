@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowLeft, Shield, Brain, Settings, AlertTriangle, CheckCircle2,
@@ -63,6 +63,7 @@ const MetricCard = ({ icon: Icon, label, value, sub }: { icon: any; label: strin
 );
 
 const WorkforcePage = () => {
+  useEffect(() => { window.scrollTo(0, 0); }, []);
   const [activeTab, setActiveTab] = useState<"crisis" | "forecasting" | "allocation">("crisis");
   const [expandedStep, setExpandedStep] = useState<number | null>(null);
 
