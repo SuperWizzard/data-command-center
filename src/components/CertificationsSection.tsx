@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
-import { ExternalLink, GraduationCap } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import udacityLogo from "@/assets/udacity-logo.png";
 import datacampLogo from "@/assets/datacamp-logo.jpg";
+import helwanLogo from "@/assets/helwan-logo.jpg";
 
 const certs = [
   { title: "Data Analysis Nano Degree", org: "Udacity", logo: udacityLogo, url: "https://s3-us-west-2.amazonaws.com/udacity-printer/production/certificates/2a3ac4a9-f7cf-455f-a438-8520fedd4ba4.pdf" },
@@ -35,8 +36,8 @@ const CertificationsSection = () => {
           className="mb-10 max-w-4xl"
         >
           <div className="card-glow rounded-xl border border-primary/30 p-6 bg-gradient-to-br from-primary/5 to-transparent flex items-center gap-5">
-            <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-              <GraduationCap className="w-7 h-7 text-primary" />
+            <div className="w-16 h-16 rounded-xl bg-white flex items-center justify-center shrink-0 overflow-hidden p-1.5">
+              <img src={helwanLogo} alt="Helwan University" className="w-full h-full object-contain" />
             </div>
             <div>
               <h3 className="font-bold text-lg">Bachelor of Commerce — Helwan University</h3>
