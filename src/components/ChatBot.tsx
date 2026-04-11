@@ -15,6 +15,11 @@ const ChatBot = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const timer = setTimeout(() => { if (!open) setShowBubble(true); }, 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages]);
 
