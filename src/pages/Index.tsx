@@ -8,8 +8,10 @@ import DashboardGallery from "@/components/DashboardGallery";
 import CertificationsSection from "@/components/CertificationsSection";
 import MetricsSection from "@/components/MetricsSection";
 import FooterSection from "@/components/FooterSection";
+import { useVisitorTracking } from "@/hooks/useVisitorTracking";
 
 const Index = () => {
+  useVisitorTracking();
   return (
     <main className="min-h-screen bg-background text-foreground">
       <Navbar />
