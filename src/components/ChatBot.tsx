@@ -34,6 +34,27 @@ const ChatBot = () => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages]);
 
+  const ensureConversation = async () => {
+    if (conversationIdRef.current) return conversationIdRef.current;
+    const { data } = await supabase
+      .from("chat_conversations")
+      .insert({ session_id: getSessionId() })
+      .select("id")
+      .single();
+    if (data) conversationIdRef.current = data.id;
+    return conversationIdRef.current;
+  };
+
+  const saveMessage = async (role: string, content: string) => {
+    const convId = await ensureConversation();
+    if (!convId) return;
+    await supabase.from("chat_messages").insert({
+      conversation_id: convId,
+      role,
+      content,
+    });
+  };
+
   const send = useCallback(async () => {
     const text = input.trim();
     if (!text || isLoading) return;
@@ -43,6 +64,9 @@ const ChatBot = () => {
     const allMessages = [...messages, userMsg];
     setMessages(allMessages);
     setIsLoading(true);
+
+    // Save user message
+    saveMessage("user", text);
 
     let assistantSoFar = "";
 
@@ -58,7 +82,9 @@ const ChatBot = () => {
 
       if (!resp.ok || !resp.body) {
         const err = await resp.json().catch(() => ({ error: "Unknown error" }));
-        setMessages((prev) => [...prev, { role: "assistant", content: err.error || "Something went wrong." }]);
+        const errMsg = err.error || "Something went wrong.";
+        setMessages((prev) => [...prev, { role: "assistant", content: errMsg }]);
+        saveMessage("assistant", errMsg);
         setIsLoading(false);
         return;
       }
@@ -99,8 +125,15 @@ const ChatBot = () => {
           }
         }
       }
+
+      // Save complete assistant response
+      if (assistantSoFar) {
+        saveMessage("assistant", assistantSoFar);
+      }
     } catch {
-      setMessages((prev) => [...prev, { role: "assistant", content: "Connection error. Please try again." }]);
+      const errMsg = "Connection error. Please try again.";
+      setMessages((prev) => [...prev, { role: "assistant", content: errMsg }]);
+      saveMessage("assistant", errMsg);
     }
 
     setIsLoading(false);
