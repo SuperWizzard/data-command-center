@@ -1,10 +1,20 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, X, Send, Bot, User } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
+
+const getSessionId = () => {
+  let sid = sessionStorage.getItem("chat_session_id");
+  if (!sid) {
+    sid = crypto.randomUUID();
+    sessionStorage.setItem("chat_session_id", sid);
+  }
+  return sid;
+};
 
 const ChatBot = () => {
   const [open, setOpen] = useState(false);
@@ -12,6 +22,7 @@ const ChatBot = () => {
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const conversationIdRef = useRef<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -23,6 +34,27 @@ const ChatBot = () => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages]);
 
+  const ensureConversation = async () => {
+    if (conversationIdRef.current) return conversationIdRef.current;
+    const { data } = await supabase
+      .from("chat_conversations")
+      .insert({ session_id: getSessionId() })
+      .select("id")
+      .single();
+    if (data) conversationIdRef.current = data.id;
+    return conversationIdRef.current;
+  };
+
+  const saveMessage = async (role: string, content: string) => {
+    const convId = await ensureConversation();
+    if (!convId) return;
+    await supabase.from("chat_messages").insert({
+      conversation_id: convId,
+      role,
+      content,
+    });
+  };
+
   const send = useCallback(async () => {
     const text = input.trim();
     if (!text || isLoading) return;
@@ -32,6 +64,9 @@ const ChatBot = () => {
     const allMessages = [...messages, userMsg];
     setMessages(allMessages);
     setIsLoading(true);
+
+    // Save user message
+    saveMessage("user", text);
 
     let assistantSoFar = "";
 
@@ -47,7 +82,9 @@ const ChatBot = () => {
 
       if (!resp.ok || !resp.body) {
         const err = await resp.json().catch(() => ({ error: "Unknown error" }));
-        setMessages((prev) => [...prev, { role: "assistant", content: err.error || "Something went wrong." }]);
+        const errMsg = err.error || "Something went wrong.";
+        setMessages((prev) => [...prev, { role: "assistant", content: errMsg }]);
+        saveMessage("assistant", errMsg);
         setIsLoading(false);
         return;
       }
@@ -88,8 +125,15 @@ const ChatBot = () => {
           }
         }
       }
+
+      // Save complete assistant response
+      if (assistantSoFar) {
+        saveMessage("assistant", assistantSoFar);
+      }
     } catch {
-      setMessages((prev) => [...prev, { role: "assistant", content: "Connection error. Please try again." }]);
+      const errMsg = "Connection error. Please try again.";
+      setMessages((prev) => [...prev, { role: "assistant", content: errMsg }]);
+      saveMessage("assistant", errMsg);
     }
 
     setIsLoading(false);
