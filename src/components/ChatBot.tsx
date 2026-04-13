@@ -36,16 +36,18 @@ const ChatBot = () => {
 
   const ensureConversation = async () => {
     if (conversationIdRef.current) return conversationIdRef.current;
-    const { data, error } = await supabase
+
+    const conversationId = crypto.randomUUID();
+    const { error } = await supabase
       .from("chat_conversations")
-      .insert({ session_id: getSessionId() })
-      .select("id")
-      .single();
+      .insert({ id: conversationId, session_id: getSessionId() });
+
     if (error) {
       console.error("Failed to create conversation:", error);
       return null;
     }
-    if (data) conversationIdRef.current = data.id;
+
+    conversationIdRef.current = conversationId;
     return conversationIdRef.current;
   };
 
