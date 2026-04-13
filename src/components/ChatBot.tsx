@@ -36,23 +36,33 @@ const ChatBot = () => {
 
   const ensureConversation = async () => {
     if (conversationIdRef.current) return conversationIdRef.current;
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("chat_conversations")
       .insert({ session_id: getSessionId() })
       .select("id")
       .single();
+    if (error) {
+      console.error("Failed to create conversation:", error);
+      return null;
+    }
     if (data) conversationIdRef.current = data.id;
     return conversationIdRef.current;
   };
 
   const saveMessage = async (role: string, content: string) => {
     const convId = await ensureConversation();
-    if (!convId) return;
-    await supabase.from("chat_messages").insert({
+    if (!convId) {
+      console.error("No conversation ID, skipping message save");
+      return;
+    }
+    const { error } = await supabase.from("chat_messages").insert({
       conversation_id: convId,
       role,
       content,
     });
+    if (error) {
+      console.error("Failed to save message:", error);
+    }
   };
 
   const send = useCallback(async () => {
