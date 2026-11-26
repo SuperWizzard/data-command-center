@@ -1,292 +1,352 @@
-import { useState, useCallback, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { MessageCircle, X, Send, Bot, User } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
+import ReactMarkdown from "react-markdown";
+import { Bot, MessageCircle, Send, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-
-type Msg = { role: "user" | "assistant"; content: string };
-
-const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
-
-const getSessionId = () => {
-  let sid = sessionStorage.getItem("chat_session_id");
-  if (!sid) {
-    sid = crypto.randomUUID();
-    sessionStorage.setItem("chat_session_id", sid);
-  }
-  return sid;
-};
-
-const ChatBot = () => {
-  const [open, setOpen] = useState(false);
-  const [showBubble, setShowBubble] = useState(false);
-  const [messages, setMessages] = useState<Msg[]>([]);
-  const [input, setInput] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const conversationIdRef = useRef<string | null>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
-
+import { starterQuestions } from "@/data/portfolio";
+import {
+  ChatMessage,
+  MAX_HISTORY,
+  MAX_INPUT,
+  readChatStream,
+  safeChatLink,
+} from "@/lib/chatStream";
+export default function ChatBot() {
+  const { pathname } = useLocation();
+  const [open, setOpen] = useState(false),
+    [messages, setMessages] = useState<ChatMessage[]>([]),
+    [input, setInput] = useState(""),
+    [loading, setLoading] = useState(false),
+    [error, setError] = useState(""),
+    [storageError, setStorageError] = useState(false);
+  const conversation = useRef<string | null>(null),
+    session = useRef(crypto.randomUUID()),
+    pending = useRef<Promise<void> | null>(null),
+    controller = useRef<AbortController | null>(null),
+    busy = useRef(false),
+    lastSend = useRef(0);
+  const inputRef = useRef<HTMLInputElement>(null),
+    panel = useRef<HTMLDivElement>(null),
+    scroll = useRef<HTMLDivElement>(null),
+    trigger = useRef<HTMLButtonElement>(null),
+    previousFocus = useRef<HTMLElement | null>(null);
   useEffect(() => {
-    const timer = setTimeout(() => { if (!open) setShowBubble(true); }, 3000);
-    return () => clearTimeout(timer);
+    const launch = (e: Event) => {
+      previousFocus.current = document.activeElement as HTMLElement;
+      setOpen(true);
+      setInput(String((e as CustomEvent).detail || "").slice(0, MAX_INPUT));
+    };
+    window.addEventListener("portfolio:chat", launch);
+    return () => {
+      window.removeEventListener("portfolio:chat", launch);
+      controller.current?.abort();
+    };
   }, []);
-
   useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-  }, [messages]);
-
-  const ensureConversation = async () => {
-    if (conversationIdRef.current) return conversationIdRef.current;
-
-    const conversationId = crypto.randomUUID();
-    const { error } = await supabase
-      .from("chat_conversations")
-      .insert({ id: conversationId, session_id: getSessionId() });
-
-    if (error) {
-      console.error("Failed to create conversation:", error);
-      return null;
+    if (open) inputRef.current?.focus();
+  }, [open]);
+  useEffect(() => {
+    scroll.current?.scrollTo({ top: scroll.current.scrollHeight });
+  }, [messages, loading]);
+  function close() {
+    setOpen(false);
+    (previousFocus.current?.isConnected
+      ? previousFocus.current
+      : trigger.current
+    )?.focus();
+  }
+  async function save(role: ChatMessage["role"], content: string) {
+    try {
+      if (!conversation.current) {
+        if (!pending.current)
+          pending.current = (async () => {
+            const id = crypto.randomUUID();
+            const { error } = await supabase
+              .from("chat_conversations")
+              .insert({ id, session_id: session.current });
+            if (error) throw error;
+            conversation.current = id;
+          })();
+        await pending.current;
+      }
+      const { error } = await supabase
+        .from("chat_messages")
+        .insert({ conversation_id: conversation.current, role, content });
+      if (error) throw error;
+    } catch {
+      pending.current = null;
+      setStorageError(true);
     }
-
-    conversationIdRef.current = conversationId;
-    return conversationIdRef.current;
-  };
-
-  const saveMessage = async (role: string, content: string) => {
-    const convId = await ensureConversation();
-    if (!convId) {
-      console.error("No conversation ID, skipping message save");
+  }
+  async function send() {
+    const text = input.trim();
+    if (!text || busy.current) return;
+    if (text.length > MAX_INPUT) {
+      setError(`Please use at most ${MAX_INPUT} characters.`);
       return;
     }
-    const { error } = await supabase.from("chat_messages").insert({
-      conversation_id: convId,
-      role,
-      content,
-    });
-    if (error) {
-      console.error("Failed to save message:", error);
+    if (Date.now() - lastSend.current < 3000) {
+      setError("Please wait a moment before another question.");
+      return;
     }
-  };
-
-  const send = useCallback(async () => {
-    const text = input.trim();
-    if (!text || isLoading) return;
+    busy.current = true;
+    lastSend.current = Date.now();
+    setLoading(true);
+    setError("");
     setInput("");
-
-    const userMsg: Msg = { role: "user", content: text };
-    const allMessages = [...messages, userMsg];
-    setMessages(allMessages);
-    setIsLoading(true);
-
-    // Save user message
-    saveMessage("user", text);
-
-    let assistantSoFar = "";
-
+    const history: ChatMessage[] = [
+      ...messages,
+      { role: "user" as const, content: text },
+    ].slice(-MAX_HISTORY);
+    setMessages(history);
+    void save("user", text);
+    const abort = new AbortController();
+    controller.current = abort;
+    const timeout = window.setTimeout(() => abort.abort(), 60000);
+    let answer = "";
     try {
-      const resp = await fetch(CHAT_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+      const r = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({ messages: history }),
+          signal: abort.signal,
         },
-        body: JSON.stringify({ messages: allMessages }),
-      });
-
-      if (!resp.ok || !resp.body) {
-        const err = await resp.json().catch(() => ({ error: "Unknown error" }));
-        const errMsg = err.error || "Something went wrong.";
-        setMessages((prev) => [...prev, { role: "assistant", content: errMsg }]);
-        saveMessage("assistant", errMsg);
-        setIsLoading(false);
-        return;
-      }
-
-      const reader = resp.body.getReader();
-      const decoder = new TextDecoder();
-      let textBuffer = "";
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        textBuffer += decoder.decode(value, { stream: true });
-
-        let newlineIndex: number;
-        while ((newlineIndex = textBuffer.indexOf("\n")) !== -1) {
-          let line = textBuffer.slice(0, newlineIndex);
-          textBuffer = textBuffer.slice(newlineIndex + 1);
-          if (line.endsWith("\r")) line = line.slice(0, -1);
-          if (!line.startsWith("data: ")) continue;
-          const jsonStr = line.slice(6).trim();
-          if (jsonStr === "[DONE]") break;
-          try {
-            const parsed = JSON.parse(jsonStr);
-            const content = parsed.choices?.[0]?.delta?.content;
-            if (content) {
-              assistantSoFar += content;
-              setMessages((prev) => {
-                const last = prev[prev.length - 1];
-                if (last?.role === "assistant") {
-                  return prev.map((m, i) => (i === prev.length - 1 ? { ...m, content: assistantSoFar } : m));
-                }
-                return [...prev, { role: "assistant", content: assistantSoFar }];
-              });
-            }
-          } catch {
-            textBuffer = line + "\n" + textBuffer;
-            break;
-          }
+      );
+      if (!r.ok || !r.body)
+        throw new Error(
+          r.status === 429
+            ? "The assistant is busy. Please try again shortly."
+            : "The assistant is unavailable. Please try again later.",
+        );
+      await readChatStream(r.body, (delta) => {
+        answer += delta;
+        if (answer.length > 24000) {
+          abort.abort();
+          throw new Error("Response length limit reached.");
         }
-      }
-
-      // Save complete assistant response
-      if (assistantSoFar) {
-        saveMessage("assistant", assistantSoFar);
-      }
-    } catch {
-      const errMsg = "Connection error. Please try again.";
-      setMessages((prev) => [...prev, { role: "assistant", content: errMsg }]);
-      saveMessage("assistant", errMsg);
+        setMessages([...history, { role: "assistant", content: answer }]);
+      });
+      if (!answer) throw new Error("No answer was received. Please try again.");
+    } catch (e) {
+      setError(
+        abort.signal.aborted
+          ? "The response stopped or timed out. You can send another question."
+          : e instanceof Error
+            ? e.message
+            : "Connection error. Please try again.",
+      );
+    } finally {
+      if (answer) void save("assistant", answer);
+      window.clearTimeout(timeout);
+      busy.current = false;
+      setLoading(false);
+      controller.current = null;
+      inputRef.current?.focus();
     }
-
-    setIsLoading(false);
-  }, [input, isLoading, messages]);
-
+  }
+  if (pathname === "/admin") return null;
   return (
     <>
-      {/* Popup bubble */}
-      <AnimatePresence>
-        {!open && showBubble && (
-          <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.9 }}
-            className="fixed bottom-[88px] right-6 z-50 bg-background border border-border rounded-xl px-4 py-2.5 shadow-lg max-w-[200px] cursor-pointer"
-            onClick={() => { setShowBubble(false); setOpen(true); }}
-          >
-            <p className="text-sm font-medium text-foreground">👋 Got questions? Ask me!</p>
-            <div className="absolute -bottom-2 right-6 w-4 h-4 bg-background border-b border-r border-border rotate-45" />
+      {!open && (
+        <button
+          ref={trigger}
+          className="fixed bottom-5 right-5 z-50 rounded-full bg-primary text-primary-foreground p-4 shadow-lg"
+          aria-label="Open portfolio assistant"
+          onClick={() => {
+            previousFocus.current = document.activeElement as HTMLElement;
+            setOpen(true);
+          }}
+        >
+          <MessageCircle size={23} />
+        </button>
+      )}
+      {open && (
+        <div
+          ref={panel}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="chat-title"
+          onKeyDown={(e) => {
+            if (e.key === "Escape") close();
+            if (e.key === "Tab") {
+              const nodes = panel.current?.querySelectorAll<HTMLElement>(
+                "button:not(:disabled), input:not(:disabled), a[href]",
+              );
+              if (!nodes?.length) return;
+              const first = nodes[0],
+                last = nodes[nodes.length - 1];
+              if (e.shiftKey && document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+              } else if (!e.shiftKey && document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
+              }
+            }
+          }}
+          className="fixed bottom-3 right-3 z-50 w-[calc(100%-1.5rem)] sm:w-[410px] h-[min(680px,90dvh)] flex flex-col border border-border bg-background shadow-2xl rounded-xl overflow-hidden"
+        >
+          <header className="flex justify-between items-center p-4 border-b border-border">
+            <div className="flex gap-2 items-center">
+              <Bot size={20} />
+              <h2 id="chat-title" className="text-sm font-semibold">
+                Explore Sobhe's story
+              </h2>
+            </div>
             <button
-              onClick={(e) => { e.stopPropagation(); setShowBubble(false); }}
-              className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-muted border border-border flex items-center justify-center text-muted-foreground hover:text-foreground text-xs"
+              aria-label="Close assistant"
+              className="p-2"
+              onClick={close}
             >
-              ×
+              <X size={18} />
             </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Floating button */}
-      <AnimatePresence>
-        {!open && (
-          <motion.button
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            exit={{ scale: 0 }}
-            onClick={() => { setShowBubble(false); setOpen(true); }}
-            className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full flex items-center justify-center text-primary-foreground shadow-lg hover:brightness-110 transition-all"
-            style={{ background: "var(--gradient-blue)" }}
-            aria-label="Open chat"
+          </header>
+          <div className="px-4 py-3 text-[10px] text-muted-foreground border-b border-border leading-relaxed">
+            AI can make mistakes.{" "}
+            <a href="/#story" className="underline" onClick={close}>
+              Read the latest portfolio
+            </a>
+            . Conversations are stored. Avoid personal or confidential
+            information.
+          </div>
+          <div
+            ref={scroll}
+            className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4"
           >
-            <MessageCircle className="w-6 h-6" />
-          </motion.button>
-        )}
-      </AnimatePresence>
-
-      {/* Chat panel */}
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            transition={{ duration: 0.2 }}
-            className="fixed bottom-6 right-6 z-50 w-[380px] max-h-[520px] rounded-2xl border border-border bg-background shadow-2xl flex flex-col overflow-hidden"
-          >
-            {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-border" style={{ background: "var(--gradient-blue)" }}>
-              <div className="flex items-center gap-2">
-                <Bot className="w-5 h-5 text-primary-foreground" />
-                <span className="font-semibold text-sm text-primary-foreground">Ask me anything</span>
+            {!messages.length && (
+              <>
+                <p className="text-sm text-muted-foreground">
+                  Ask about Sobhe's experience, leadership or projects.
+                </p>
+                {starterQuestions.slice(0, 4).map((q) => (
+                  <button
+                    key={q}
+                    className="block text-left text-xs p-3 border border-border w-full hover:border-primary"
+                    onClick={() => {
+                      setInput(q);
+                      inputRef.current?.focus();
+                    }}
+                  >
+                    {q}
+                  </button>
+                ))}
+              </>
+            )}
+            {messages.map((m, i) => (
+              <div
+                key={i}
+                className={`text-sm leading-relaxed p-3 rounded-lg break-words ${m.role === "user" ? "bg-primary/15 ml-5" : "bg-muted/60 mr-2"}`}
+              >
+                <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2">
+                  {m.role === "user" ? "You" : "Portfolio assistant"}
+                </p>
+                <div className="chat-markdown">
+                  <ReactMarkdown
+                    skipHtml
+                    urlTransform={(url) => safeChatLink(url) || ""}
+                    components={{
+                      a: ({ href, children }) =>
+                        href ? (
+                          <a
+                            href={href}
+                            target={
+                              href.startsWith("https:") ? "_blank" : undefined
+                            }
+                            rel="noopener noreferrer"
+                          >
+                            {children}
+                          </a>
+                        ) : (
+                          <span>{children}</span>
+                        ),
+                      img: () => null,
+                    }}
+                  >
+                    {m.content}
+                  </ReactMarkdown>
+                </div>
               </div>
-              <button onClick={() => setOpen(false)} className="text-primary-foreground/70 hover:text-primary-foreground">
-                <X className="w-4 h-4" />
+            ))}
+            {loading && (
+              <p role="status" className="text-xs text-muted-foreground">
+                {messages[messages.length - 1]?.role === "assistant"
+                  ? "Writing..."
+                  : "Thinking..."}
+              </p>
+            )}
+            {error && (
+              <p role="alert" className="text-xs text-red-300">
+                {error}
+              </p>
+            )}
+            {storageError && (
+              <p role="status" className="text-xs text-muted-foreground">
+                Some messages could not be saved. Your conversation can
+                continue.
+              </p>
+            )}
+          </div>
+          <form
+            className="p-3 border-t border-border"
+            onSubmit={(e) => {
+              e.preventDefault();
+              void send();
+            }}
+          >
+            <label className="sr-only" htmlFor="portfolio-question">
+              Your question
+            </label>
+            <div className="flex gap-2">
+              <input
+                ref={inputRef}
+                id="portfolio-question"
+                value={input}
+                maxLength={MAX_INPUT}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="What would you like to know?"
+                className="min-w-0 flex-1 rounded-md bg-muted px-3 py-2 text-sm"
+              />
+              <button
+                type="submit"
+                disabled={loading || !input.trim()}
+                aria-label="Send question"
+                className="p-3 bg-primary text-white rounded-md"
+              >
+                <Send size={17} />
               </button>
             </div>
-
-            {/* Messages */}
-            <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3 min-h-[300px]">
-              {messages.length === 0 && (
-                <div className="text-center text-muted-foreground text-sm py-8">
-                  <Bot className="w-10 h-10 mx-auto mb-3 text-primary/40" />
-                  <p className="font-medium">Hi! 👋</p>
-                  <p className="text-xs mt-1">Ask me about Sobhe's experience, skills, or projects.</p>
-                </div>
-              )}
-              {messages.map((msg, i) => (
-                <div key={i} className={`flex gap-2 ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                  {msg.role === "assistant" && (
-                    <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-1">
-                      <Bot className="w-3.5 h-3.5 text-primary" />
-                    </div>
-                  )}
-                  <div
-                    className={`max-w-[80%] px-3 py-2 rounded-xl text-sm leading-relaxed whitespace-pre-wrap ${
-                      msg.role === "user"
-                        ? "bg-primary text-primary-foreground rounded-br-sm"
-                        : "bg-muted text-foreground rounded-bl-sm"
-                    }`}
-                  >
-                    {msg.content}
-                  </div>
-                  {msg.role === "user" && (
-                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-1">
-                      <User className="w-3.5 h-3.5 text-primary" />
-                    </div>
-                  )}
-                </div>
-              ))}
-              {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
-                <div className="flex gap-2">
-                  <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                    <Bot className="w-3.5 h-3.5 text-primary" />
-                  </div>
-                  <div className="bg-muted px-3 py-2 rounded-xl rounded-bl-sm">
-                    <div className="flex gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: "0ms" }} />
-                      <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: "150ms" }} />
-                      <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: "300ms" }} />
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Input */}
-            <div className="p-3 border-t border-border">
-              <div className="flex gap-2">
-                <input
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && send()}
-                  placeholder="Type a question..."
-                  className="flex-1 bg-muted rounded-lg px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-primary/50 placeholder:text-muted-foreground/50"
-                  disabled={isLoading}
-                />
+            <div className="flex justify-between mt-2 text-[10px] text-muted-foreground">
+              <span>Last {MAX_HISTORY} messages sent as context</span>
+              {loading ? (
                 <button
-                  onClick={send}
-                  disabled={isLoading || !input.trim()}
-                  className="w-9 h-9 rounded-lg flex items-center justify-center text-primary-foreground disabled:opacity-40 transition-all"
-                  style={{ background: "var(--gradient-blue)" }}
+                  type="button"
+                  onClick={() => controller.current?.abort()}
                 >
-                  <Send className="w-4 h-4" />
+                  Stop response
                 </button>
-              </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMessages([]);
+                    conversation.current = null;
+                    pending.current = null;
+                    setError("");
+                    setStorageError(false);
+                  }}
+                >
+                  New conversation
+                </button>
+              )}
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </form>
+        </div>
+      )}
     </>
   );
-};
-
-export default ChatBot;
+}

@@ -1,84 +1,71 @@
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { Menu, X } from "lucide-react";
-
+import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
+import { Menu, X, ArrowUpRight } from "lucide-react";
 const links = [
-  { href: "#about", label: "About" },
-  { href: "#expertise", label: "Expertise" },
-  { href: "#case-studies", label: "Case Studies" },
-  { href: "#tech", label: "Tech Stack" },
-  { href: "#certifications", label: "Certifications" },
-  { href: "#contact", label: "Contact" },
+  ["story", "My Story"],
+  ["leadership", "Leadership"],
+  ["work", "My Work"],
+  ["tech", "Capabilities"],
+  ["contact", "Contact"],
 ];
-
-const Navbar = () => {
-  const [scrolled, setScrolled] = useState(false);
+export default function Navbar() {
   const [open, setOpen] = useState(false);
-
+  const toggle = useRef<HTMLButtonElement>(null);
   useEffect(() => {
-    const handler = () => setScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", handler);
-    return () => window.removeEventListener("scroll", handler);
+    const close = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setOpen(false);
+        toggle.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", close);
+    return () => window.removeEventListener("keydown", close);
   }, []);
-
   return (
-    <motion.nav
-      initial={{ y: -60, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-background/80 backdrop-blur-md border-b border-border" : ""
-      }`}
-    >
-      <div className="section-container flex items-center justify-between h-16">
-        <a href="#" className="font-mono text-sm font-bold tracking-wider gradient-text">
-          SM
-        </a>
-
-        {/* Desktop */}
-        <div className="hidden md:flex items-center gap-6">
-          {links.map((l) => (
-            <a key={l.href} href={l.href} className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200">
-              {l.label}
-            </a>
-          ))}
-          <a
-            href="#live-projects"
-            className="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold text-primary-foreground transition-all duration-300 hover:brightness-110 hover:scale-105"
-            style={{ background: "var(--gradient-blue)" }}
-          >
-            See My Work
-          </a>
-        </div>
-
-        {/* Mobile toggle */}
-        <button className="md:hidden text-foreground" onClick={() => setOpen(!open)}>
-          {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
-      </div>
-
-      {/* Mobile menu */}
-      {open && (
-        <div className="md:hidden bg-background/95 backdrop-blur-md border-b border-border pb-4">
-          <div className="section-container flex flex-col gap-3">
-            {links.map((l) => (
-              <a key={l.href} href={l.href} className="text-sm text-muted-foreground py-1" onClick={() => setOpen(false)}>
-                {l.label}
+    <>
+      <a className="skip-link" href="#main-content">
+        Skip to content
+      </a>
+      <nav className="story-nav" aria-label="Main navigation">
+        <div className="section-container nav-inner">
+          <Link className="wordmark" to="/" aria-label="Sobhe Mosaad home">
+            sobhe<span>.</span>
+            <small>MOSAAD</small>
+          </Link>
+          <div className="desktop-links">
+            {links.map(([id, label]) => (
+              <a key={id} href={`/#${id}`}>
+                {label}
               </a>
             ))}
-            <a
-              href="#live-projects"
-              className="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold text-primary-foreground w-fit mt-1"
-              style={{ background: "var(--gradient-blue)" }}
-              onClick={() => setOpen(false)}
-            >
-              See My Work
+            <a className="nav-ai" href="/#explore-ai">
+              Ask my AI <ArrowUpRight size={14} />
             </a>
           </div>
+          <button
+            ref={toggle}
+            className="mobile-toggle"
+            aria-expanded={open}
+            aria-controls="mobile-navigation"
+            aria-label={open ? "Close navigation" : "Open navigation"}
+            onClick={() => setOpen(!open)}
+          >
+            {open ? <X /> : <Menu />}
+          </button>
         </div>
-      )}
-    </motion.nav>
+        {open && (
+          <div
+            id="mobile-navigation"
+            className="mobile-links section-container"
+          >
+            {[...links, ["explore-ai", "Ask my AI"]].map(([id, label]) => (
+              <a key={id} href={`/#${id}`} onClick={() => setOpen(false)}>
+                {label}
+              </a>
+            ))}
+          </div>
+        )}
+      </nav>
+    </>
   );
-};
-
-export default Navbar;
+}

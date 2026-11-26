@@ -1,16 +1,14 @@
+import { certifications } from "@/data/portfolio";
 import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 import udacityLogo from "@/assets/udacity-logo.png";
 import datacampLogo from "@/assets/datacamp-logo.jpg";
 import helwanLogo from "@/assets/helwan-logo.jpg";
 
-const certs = [
-  { title: "Data Analysis Nano Degree", org: "Udacity", logo: udacityLogo, url: "https://s3-us-west-2.amazonaws.com/udacity-printer/production/certificates/2a3ac4a9-f7cf-455f-a438-8520fedd4ba4.pdf" },
-  { title: "Data Challenger Track", org: "Udacity", logo: udacityLogo, url: "https://s3-us-west-2.amazonaws.com/udacity-printer/production/certificates/8277317a-7c5d-4955-ad3e-f454321aab82.pdf" },
-  { title: "Understanding Data Visualization", org: "DataCamp", logo: datacampLogo, url: "https://www.datacamp.com/statement-of-accomplishment/course/bae3db506d1df1cafaa39c0034af628f940bce01?raw=1" },
-  { title: "Intermediate SQL", org: "DataCamp", logo: datacampLogo, url: "https://www.datacamp.com/statement-of-accomplishment/course/bf326c4747784867fc86f99a493f383fa273bd40?raw=1" },
-  { title: "Introduction to Data Science in Python", org: "DataCamp", logo: datacampLogo, url: "https://www.datacamp.com/statement-of-accomplishment/course/d69e5002011e2121c3e990db9ac6404d657def96?raw=1" },
-];
+const certs = certifications.map((cert) => ({
+  ...cert,
+  logo: cert.org === "Udacity" ? udacityLogo : datacampLogo,
+}));
 
 const CertificationsSection = () => {
   return (
@@ -22,8 +20,12 @@ const CertificationsSection = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <p className="font-mono text-primary text-sm tracking-widest uppercase mb-2">Credentials</p>
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Education & Certifications</h2>
+          <p className="font-mono text-primary text-sm tracking-widest uppercase mb-2">
+            09 / Continuing to learn
+          </p>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            Education & Certifications
+          </h2>
           <div className="blue-line mb-12 max-w-xs" />
         </motion.div>
 
@@ -37,16 +39,32 @@ const CertificationsSection = () => {
         >
           <div className="card-glow rounded-xl border border-primary/30 p-6 bg-gradient-to-br from-primary/5 to-transparent flex items-center gap-5">
             <div className="w-16 h-16 rounded-xl bg-white flex items-center justify-center shrink-0 overflow-hidden p-1.5">
-              <img src={helwanLogo} alt="Helwan University" className="w-full h-full object-contain" />
+              <img
+                src={helwanLogo}
+                alt="Helwan University"
+                className="w-full h-full object-contain"
+              />
             </div>
             <div>
-              <h3 className="font-bold text-lg">Bachelor of Commerce — Helwan University</h3>
-              <p className="text-sm text-primary/70 font-medium">Faculty of Commerce & Business Administration</p>
+              <h3 className="font-bold text-lg">
+                Bachelor of Commerce — Helwan University
+              </h3>
+              <p className="text-sm text-primary/70 font-medium">
+                Faculty of Commerce & Business Administration
+              </p>
               <div className="flex flex-wrap gap-3 mt-2 text-xs text-muted-foreground">
-                <span className="px-2.5 py-1 rounded-full bg-secondary border border-border">Accounting Major</span>
-                <span className="px-2.5 py-1 rounded-full bg-secondary border border-border">Class of 2022</span>
-                <span className="px-2.5 py-1 rounded-full bg-secondary border border-border">Financial Analysis</span>
-                <span className="px-2.5 py-1 rounded-full bg-secondary border border-border">Corporate Accounting</span>
+                <span className="px-2.5 py-1 rounded-full bg-secondary border border-border">
+                  Accounting Major
+                </span>
+                <span className="px-2.5 py-1 rounded-full bg-secondary border border-border">
+                  Class of 2022
+                </span>
+                <span className="px-2.5 py-1 rounded-full bg-secondary border border-border">
+                  Financial Analysis
+                </span>
+                <span className="px-2.5 py-1 rounded-full bg-secondary border border-border">
+                  Corporate Accounting
+                </span>
               </div>
             </div>
           </div>
@@ -63,7 +81,11 @@ const CertificationsSection = () => {
               className="card-glow rounded-xl border border-border p-6 flex flex-col items-center text-center"
             >
               <div className="w-20 h-20 rounded-xl border border-border bg-secondary/50 flex items-center justify-center mb-4 overflow-hidden">
-                <img src={cert.logo} alt={`${cert.org} logo`} className="w-14 h-14 object-contain" />
+                <img
+                  src={cert.logo}
+                  alt={`${cert.org} logo`}
+                  className="w-14 h-14 object-contain"
+                />
               </div>
               <h3 className="font-semibold mb-1">{cert.title}</h3>
               <p className="text-sm text-muted-foreground mb-3">{cert.org}</p>

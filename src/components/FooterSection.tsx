@@ -12,9 +12,12 @@ const FooterSection = () => {
           transition={{ duration: 0.5 }}
           className="max-w-3xl mx-auto text-center"
         >
-          <p className="font-mono text-primary text-sm tracking-widest uppercase mb-4">Let's Connect</p>
+          <p className="eyebrow mb-4">11 / Let’s connect</p>
+          <h2 className="contact-heading">What could we build next?</h2>
           <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-10">
-            My expertise lies at the intersection of workforce analytics, systems architecture, and performance optimization. I design data frameworks that make operations scalable, measurable, and strategically aligned.
+            People, operations and technology are connected. Let’s talk about
+            the challenges you are working on, the systems you want to improve
+            and what could come next.
           </p>
 
           <div className="flex flex-wrap justify-center gap-4 mb-12">
@@ -45,9 +48,17 @@ const FooterSection = () => {
             </a>
           </div>
 
+          <p className="text-xs text-muted-foreground mb-8">
+            Visit information and AI conversations are stored to understand
+            portfolio engagement. Please do not share confidential information.{" "}
+            <a className="underline" href="mailto:sobhemosaad@gmail.com">
+              Contact me about privacy
+            </a>
+            .
+          </p>
           <div className="blue-line mb-6" />
           <p className="text-xs text-muted-foreground font-mono">
-            © 2026 Sobhe Mosaad — Data & Performance Systems
+            © 2026 Sobhe Mosaad — Workforce · Data · Technology · Leadership
           </p>
         </motion.div>
       </div>
