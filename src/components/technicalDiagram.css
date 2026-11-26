@@ -1,0 +1,116 @@
+.technical-diagram {
+  margin: 18px 0;
+  padding: clamp(10px, 2vw, 20px);
+  background: #101923;
+  border: 1px solid #394957;
+  border-radius: 7px;
+  min-width: 0;
+}
+.technical-diagram figcaption,
+.technical-diagram dialog header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.technical-diagram button {
+  border: 1px solid #678094;
+  border-radius: 4px;
+  padding: 4px 8px;
+  color: #daf0ff;
+  font-size: 0.82rem;
+}
+.technical-diagram p {
+  margin: 8px 0 0;
+  color: #bdc9d5;
+  font-size: 0.88rem;
+}
+.diagram-scroll {
+  overflow: auto;
+  max-width: 100%;
+  background: #0c141c;
+  border: 1px solid #293944;
+}
+.diagram-scroll svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.diagram-node > rect,
+.diagram-node > polygon,
+.diagram-node > path:first-child {
+  fill: #182c3e;
+  stroke: #7797ad;
+  stroke-width: 1.2;
+}
+.diagram-node.database > path:first-child,
+.diagram-node.entity > rect {
+  fill: #143132;
+  stroke: #72aaa4;
+}
+.diagram-node.decision > polygon {
+  fill: #372e20;
+  stroke: #c1a268;
+}
+.diagram-node.success > rect {
+  fill: #1d352a;
+  stroke: #85aa91;
+}
+.diagram-node.exception > rect {
+  fill: #38262b;
+  stroke: #bf8d94;
+}
+.diagram-node text,
+.diagram-label {
+  fill: #e8eff6;
+  font:
+    13px system-ui,
+    sans-serif;
+}
+.diagram-node.entity text:first-of-type {
+  font-weight: 700;
+}
+.diagram-label {
+  font-size: 11px;
+  fill: #c4d2df;
+}
+.diagram-edge {
+  stroke: #99adbd;
+  stroke-width: 1.3;
+  fill: none;
+}
+.diagram-boundary {
+  stroke: #526775;
+  stroke-dasharray: 5 4;
+  fill: none;
+}
+.technical-diagram dialog {
+  width: min(94vw, 1100px);
+  max-height: 92dvh;
+  overflow: auto;
+  padding: 18px;
+  background: #101923;
+  color: #eef6ff;
+  border: 1px solid #678094;
+  border-radius: 8px;
+  margin: auto;
+}
+.technical-diagram dialog::backdrop {
+  background: #03070de0;
+}
+.technical-diagram :focus-visible {
+  outline: 2px solid #97d9f1;
+  outline-offset: 2px;
+}
+.technical-diagram .diagram-pan {
+  display: none;
+}
+@media (max-width: 700px) {
+  .technical-diagram .diagram-pan {
+    display: block;
+  }
+  .technical-diagram figcaption button {
+    flex-shrink: 0;
+  }
+}

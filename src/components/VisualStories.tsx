@@ -1,3 +1,5 @@
+import { TechnicalDiagram } from "./TechnicalDiagram";
+import { diagrams, organisation } from "@/data/technicalDiagrams";
 import { useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { chapterFlows, lifecycle, stories } from "@/data/visualStories";
@@ -139,7 +141,7 @@ export function ChapterVisual({ chapter }: { chapter: number }) {
           </svg>
         </figure>
       )}
-      {chapter === 3 && <LeadershipVisual />}
+      {chapter === 3 && <TechnicalDiagram diagram={organisation} />}
       <Workflow
         key={chapter}
         title={
@@ -155,6 +157,12 @@ export function ChapterVisual({ chapter }: { chapter: number }) {
         steps={chapterFlows[chapter]}
       />
       {chapter === 1 && <Forecast />}
+      {chapter === 4 && (
+        <TechnicalDiagram diagram={diagrams["wfm-migration"]} />
+      )}
+      {chapter === 5 && (
+        <TechnicalDiagram diagram={diagrams["knowledge-hub"]} />
+      )}
     </div>
   );
 }
@@ -305,6 +313,7 @@ export function WorkforceVisual() {
           ))}
         </dl>
       </div>
+      <TechnicalDiagram diagram={diagrams.workforce} />
       <Workflow title="Operational decision lifecycle" steps={lifecycle} />
     </section>
   );
@@ -411,6 +420,7 @@ function DataExample() {
 export function CaseStudyVisual({ slug }: { slug: string }) {
   return (
     <div className={"case-visual visual-" + slug}>
+      {diagrams[slug] && <TechnicalDiagram diagram={diagrams[slug]} />}
       {slug === "wfm-migration" && (
         <div className="migration-brand">
           <span>Injixo / Peopleware</span>

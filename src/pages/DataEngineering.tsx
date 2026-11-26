@@ -1,3 +1,11 @@
+import { TechnicalDiagram } from "@/components/TechnicalDiagram";
+import {
+  diagrams,
+  erd,
+  transaction,
+  leave,
+  history,
+} from "@/data/technicalDiagrams";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -58,6 +66,7 @@ export default function DataEngineering() {
         <section>
           <h2>Model the relationships</h2>
           <p>Synthetic operational schema. Select an entity to see its role.</p>
+          <TechnicalDiagram diagram={erd} />
           <div className="entity-map">
             {entities.map((e, i) => (
               <button
@@ -81,6 +90,7 @@ export default function DataEngineering() {
         </section>
         <section>
           <h2>Report from the correct operational period</h2>
+          <TechnicalDiagram diagram={history} />
           <p>
             Use the assignment valid on the roster date. Looking up the current
             assignment can silently change historical totals.
@@ -132,6 +142,7 @@ GROUP BY r.employee_id, a.team;`}</pre>
         </section>
         <section>
           <h2>From system records to decisions</h2>
+          <TechnicalDiagram diagram={diagrams.lineage} />
           <p className="relation-line">
             Operational systems → database connections → SQL processing →
             transformation → reports and applications
@@ -146,6 +157,7 @@ GROUP BY r.employee_id, a.team;`}</pre>
         </section>
         <section>
           <h2>Protect and reconcile transactions</h2>
+          <TechnicalDiagram diagram={transaction} />
           <p>Explore a synthetic request from validation through audit.</p>
           <div className="assignment-track">
             {["Accepted", "Rejected", "Rolled back"].map((x) => (
@@ -181,6 +193,10 @@ GROUP BY r.employee_id, a.team;`}</pre>
             <p>{item.problem}</p>
             <h4>Investigation and approach</h4>
             <p>{item.approach}</p>
+            {item.id === "entitlement" && <TechnicalDiagram diagram={leave} />}
+            {item.id === "troubleshooting" && (
+              <TechnicalDiagram diagram={diagrams.troubleshooting} />
+            )}
             <h4>Validation</h4>
             <p>{item.validation}</p>
             {item.id === "migration" && (
