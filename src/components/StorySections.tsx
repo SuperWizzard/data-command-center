@@ -18,6 +18,9 @@ import {
   projects,
   starterQuestions,
 } from "@/data/portfolio";
+import university from "@/assets/helwan-logo.jpg";
+import delivery from "@/assets/delivery-hero-logo.png";
+import centrecom from "@/assets/centrecom-logo.png";
 import portrait from "@/assets/profile-optimized.jpg";
 
 export function SectionHeading({
@@ -151,6 +154,24 @@ export function StoryTimeline() {
           <span className="chapter-number" aria-hidden="true">
             0{active + 1}
           </span>
+          <div className="journey-route">
+            <span>Egypt</span>
+            <i />
+            <span>Malta</span>
+            {active < 4 && (
+              <img
+                src={[university, delivery, centrecom, centrecom][active]}
+                alt={
+                  [
+                    "Helwan University",
+                    "Delivery Hero",
+                    "Centrecom",
+                    "Centrecom",
+                  ][active]
+                }
+              />
+            )}
+          </div>
           <p className="eyebrow">{chapters[active].place}</p>
           <h3>{chapters[active].title}</h3>
           <p>{chapters[active].text}</p>

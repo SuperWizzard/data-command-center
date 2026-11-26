@@ -1,15 +1,13 @@
 import Navbar from "@/components/Navbar";
 import {
-  StoryHero,
   StoryTimeline,
   LeadershipSection,
   ThinkingSection,
-  BuiltSection,
   DemonstrationsSection,
   CurrentlyBuilding,
   ExploreAI,
 } from "@/components/StorySections";
-import TechStackSection from "@/components/TechStackSection";
+import { OrbitHero, ProjectUniverse, Ecosystem } from "@/components/Universe";
 import DashboardGallery from "@/components/DashboardGallery";
 import CertificationsSection from "@/components/CertificationsSection";
 import FooterSection from "@/components/FooterSection";
@@ -18,14 +16,15 @@ export default function Index() {
     <>
       <Navbar />
       <main id="main-content">
-        <StoryHero />
+        <OrbitHero />
+        <ProjectUniverse />
         <StoryTimeline />
         <LeadershipSection />
         <ThinkingSection />
-        <BuiltSection />
+
         <DemonstrationsSection />
         <DashboardGallery />
-        <TechStackSection />
+        <Ecosystem />
         <CurrentlyBuilding />
         <CertificationsSection />
         <ExploreAI />

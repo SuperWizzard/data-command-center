@@ -43,7 +43,7 @@ function RouteEffects() {
       );
     document.title = title
       ? `${title} | Sobhe Mosaad`
-      : "Sobhe Mosaad | Workforce Management, Data Intelligence & Technology";
+      : "Sobhe Mosaad | Beyond Boundaries";
     const robots = document.querySelector('meta[name="robots"]');
     robots?.setAttribute(
       "content",

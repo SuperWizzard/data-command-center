@@ -1,0 +1,523 @@
+.orbit-hero,
+.universe-section,
+.case-page {
+  color: #eff6ff;
+}
+.orbit-hero {
+  background:
+    radial-gradient(ellipse at 72% 45%, #172449 0, transparent 48%),
+    linear-gradient(125deg, #050916, #091324 65%, #12102a);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-bottom: 1px solid #22324d;
+}
+.orbit-hero:before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(#7999d20b 1px, transparent 1px),
+    linear-gradient(90deg, #7999d20b 1px, transparent 1px);
+  background-size: 38px 38px;
+  mask-image: linear-gradient(110deg, transparent, #000 60%);
+}
+.orbit-wrap {
+  display: grid;
+  grid-template-columns: 1.06fr 1fr;
+  align-items: center;
+  gap: 4%;
+  padding-block: clamp(105px, 10vw, 160px) 46px;
+}
+.signal,
+.instrument,
+.orbit-resume,
+.star-cards small,
+.star-cards footer,
+.flow-strip,
+.lab small {
+  font:
+    600 0.71rem/1.5 ui-monospace,
+    monospace;
+  letter-spacing: 0.06em;
+}
+.signal,
+.instrument,
+.orbit-resume {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #98def5;
+}
+.signal {
+  text-transform: uppercase;
+}
+.signal i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #53e5ec;
+  box-shadow: 0 0 15px #18c5dc;
+}
+.signal b {
+  color: #7788aa;
+}
+.orbit-copy h1 {
+  font:
+    650 clamp(3.55rem, 6.6vw, 7rem)/0.99 "Segoe UI",
+    sans-serif;
+  letter-spacing: -0.075em;
+  margin: 25px 0;
+}
+.orbit-copy em {
+  font-style: normal;
+  color: #a8c7ff;
+  background: linear-gradient(100deg, #67e8f9, #a9b9ff 60%, #c09cff);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.orbit-lead {
+  max-width: 33ch;
+  font-size: clamp(1.1rem, 1.65vw, 1.55rem);
+  color: #c4d3e5;
+}
+.orbit-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 27px 0 15px;
+}
+.orbit-actions > * {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid #455671;
+  border-radius: 9px;
+  padding: 11px 14px;
+  font-weight: 600;
+  background: #111c31;
+}
+.orbit-actions a:first-child {
+  background: #99edff;
+  color: #081226;
+}
+.orbit-actions svg {
+  width: 17px;
+}
+.observatory,
+.tech-console,
+.star-cards > a {
+  border: 1px solid #334763;
+  border-radius: 20px;
+  background:
+    radial-gradient(
+      ellipse at var(--light, 70%) 35%,
+      #20355a 0,
+      transparent 55%
+    ),
+    #0c1527;
+}
+.observatory {
+  padding: 16px 20px 12px;
+  position: relative;
+  box-shadow:
+    0 20px 70px #02061255,
+    inset 0 1px #7187b122;
+}
+.instrument {
+  justify-content: space-between;
+  font-size: 0.63rem;
+  color: #9db9d2;
+}
+.orbital {
+  position: relative;
+  aspect-ratio: 1;
+  max-width: 420px;
+  margin: auto;
+}
+.orbital > svg {
+  width: 100%;
+  height: 100%;
+}
+.ring {
+  fill: none;
+  stroke: #5877a5;
+  stroke-width: 0.8;
+  opacity: 0.7;
+}
+.ring:nth-of-type(4) {
+  stroke-dasharray: 2 5;
+  animation: spin 110s linear infinite;
+  transform-origin: center;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.orbital > img {
+  position: absolute;
+  inset: 32%;
+  width: 36%;
+  height: 36%;
+  object-fit: cover;
+  object-position: center 24%;
+  border-radius: 50%;
+  border: 3px solid #9bb9ed;
+  box-shadow: 0 0 35px #718be659;
+}
+.orbital button {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  border: 1px solid var(--tint);
+  color: var(--tint);
+  border-radius: 12px;
+  background: #0c1629;
+  display: grid;
+  place-items: center;
+  min-width: 41px;
+  min-height: 40px;
+  padding: 4px;
+}
+.orbital button svg {
+  width: 17px;
+  height: 17px;
+}
+.orbital small {
+  font: 8px monospace;
+  letter-spacing: 1px;
+}
+.orbital button[aria-pressed="true"] {
+  box-shadow: 0 0 18px color-mix(in srgb, var(--tint) 45%, transparent);
+  background: #24314b;
+}
+.readout {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-top: 1px solid #34435f;
+  padding-top: 10px;
+}
+.readout svg,
+.star-cards header,
+.lab summary > svg:first-child {
+  color: var(--tint);
+}
+.readout p,
+.lab > p,
+.tech-console aside p {
+  color: #adbed2;
+  font-size: 0.88rem;
+}
+.universe-section {
+  padding-block: 55px;
+}
+.universe-section h2,
+.section-heading h2,
+.case-page h1 {
+  font-family: "Segoe UI", sans-serif;
+  letter-spacing: -0.055em;
+  font-weight: 650;
+}
+.universe-section h2 {
+  font-size: clamp(2.4rem, 4vw, 4rem);
+  margin: 6px 0 20px;
+}
+.directory {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.directory label,
+.directory select,
+.tech-console button {
+  border: 1px solid #344662;
+  background: #101c30;
+  border-radius: 8px;
+  padding: 9px;
+  color: #deebfa;
+}
+.directory label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 230px;
+}
+.directory input {
+  width: 100%;
+  background: transparent;
+}
+.star-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 13px;
+}
+.star-cards > a {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background:
+    radial-gradient(
+      ellipse at 100% 0%,
+      color-mix(in srgb, var(--tint) 18%, transparent),
+      transparent 65%
+    ),
+    #101829;
+  border-top: 2px solid var(--tint);
+  transition: transform 0.2s;
+}
+.star-cards > a:hover {
+  transform: translateY(-3px);
+}
+.star-cards > a:first-child {
+  grid-column: span 2;
+}
+.star-cards header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+.star-cards header svg:last-child {
+  width: 16px;
+}
+.star-cards small {
+  color: var(--tint);
+}
+.star-cards h3,
+.lab > h3,
+.tech-console h3 {
+  font-size: 1.55rem;
+  line-height: 1.15;
+  font-weight: 650;
+  margin: 8px 0;
+}
+.star-cards p {
+  color: #bbcadc;
+  font-size: 0.94rem;
+}
+.flow-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: auto 0 10px;
+  padding-top: 16px;
+}
+.flow-strip span {
+  color: var(--tint);
+  border: 1px solid #384258;
+  border-radius: 4px;
+  padding: 3px 5px;
+  font-size: 0.61rem;
+}
+.star-cards footer {
+  color: #a9b9cc;
+  font-size: 0.65rem;
+}
+.lab {
+  margin-top: 42px;
+}
+.lab > details {
+  margin-top: 8px;
+  border: 1px solid #293852;
+  border-left: 3px solid var(--tint);
+  border-radius: 8px;
+  background: #0d1728;
+}
+.lab summary {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  font-weight: 600;
+}
+.lab summary small {
+  margin-left: auto;
+  color: #b4c4db;
+}
+.lab-note {
+  border-top: 1px solid #293852;
+  margin: 0 14px;
+}
+.lab-note p,
+.lab-note a {
+  margin: 6px 14px;
+  font-size: 0.9rem;
+}
+.lab-note a,
+.tech-console a {
+  color: #8ce6ff;
+}
+.tech-console {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 20px;
+  padding: 20px;
+}
+.tech-console button {
+  margin: 3px;
+  font-size: 0.86rem;
+}
+.tech-console button[aria-pressed="true"] {
+  color: #071321;
+  background: #9deefe;
+}
+.tech-console aside {
+  border-left: 1px solid #344862;
+  padding: 12px 20px;
+}
+.tech-console aside p {
+  margin: 10px 0;
+}
+.story-section {
+  padding-block: clamp(40px, 6vw, 74px);
+}
+.section-heading h2 em,
+.chapter-content h3,
+.leadership-layout blockquote {
+  font-family: inherit;
+}
+.chapter-content,
+.process-detail,
+.team-diagram,
+.architecture-figure {
+  background: linear-gradient(125deg, #112639, #201c39);
+  border: 1px solid #34455f;
+  border-radius: 14px;
+}
+.team-branches > div:first-child {
+  color: #5be5db;
+}
+.team-branches > div:last-child {
+  color: #b6a8ff;
+}
+.case-page .eyebrow,
+.architecture-figure li span {
+  color: var(--tint, #87dfff);
+}
+[role="dialog"][aria-label*="ssistant"] {
+  border-color: #5b648f;
+  background: linear-gradient(145deg, #111e32, #151528);
+}
+@media (max-width: 800px) {
+  .orbit-wrap {
+    gap: 20px;
+  }
+  .star-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .orbit-copy h1 {
+    font-size: clamp(3rem, 7vw, 5rem);
+  }
+}
+@media (max-width: 640px) {
+  .orbit-wrap,
+  .tech-console {
+    grid-template-columns: 1fr;
+  }
+  .orbit-wrap {
+    padding-block: 96px 30px;
+  }
+  .orbit-copy h1 {
+    font-size: clamp(3.5rem, 13vw, 5rem);
+    margin: 16px 0;
+  }
+  .orbit-actions {
+    margin: 18px 0 12px;
+  }
+  .observatory {
+    padding: 12px;
+  }
+  .orbital {
+    max-width: 300px;
+  }
+  .star-cards {
+    grid-template-columns: 1fr;
+  }
+  .star-cards > a:first-child {
+    grid-column: auto;
+  }
+  .directory select {
+    max-width: 100%;
+    flex: 1 1 120px;
+  }
+  .tech-console aside {
+    border-left: 0;
+    border-top: 1px solid #344862;
+    padding: 10px 0;
+  }
+  .lab summary {
+    flex-wrap: wrap;
+  }
+  .lab summary small {
+    font-size: 0.62rem;
+  }
+  .lab summary svg {
+    width: 17px;
+  }
+  .lab-note summary {
+    padding-inline: 0;
+  }
+  .universe-section {
+    padding-block: 35px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ring,
+  .star-cards > a {
+    animation: none;
+    transition: none;
+  }
+}
+.journey-route {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #96e8f2;
+  font: 12px monospace;
+  margin-bottom: 16px;
+}
+.journey-route i {
+  width: 48px;
+  border-top: 1px dashed #73bedb;
+}
+.journey-route img {
+  height: 32px;
+  max-width: 90px;
+  object-fit: contain;
+  background: white;
+  border-radius: 5px;
+  padding: 3px;
+  margin-left: auto;
+}
+[aria-labelledby="chat-title"] {
+  background: linear-gradient(145deg, #101e32, #171529);
+  border-color: #515d88;
+}
+[aria-labelledby="chat-title"] header {
+  background: linear-gradient(100deg, #172d46, #302344);
+}
+.orbit-copy .signal strong {
+  font:
+    650 clamp(1rem, 1.6vw, 1.4rem)/1.3 "Segoe UI",
+    sans-serif;
+  text-transform: none;
+  letter-spacing: -0.025em;
+}
+.orbit-wrap {
+  padding-top: clamp(44px, 5vw, 80px);
+}
+@media (max-width: 640px) {
+  .orbit-wrap {
+    padding-top: 30px;
+  }
+  .orbit-actions > * {
+    padding: 9px 10px;
+    font-size: 0.86rem;
+  }
+  .orbit-actions {
+    gap: 6px;
+  }
+}

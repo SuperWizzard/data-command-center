@@ -1,6 +1,9 @@
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { projects } from "@/data/portfolio";
+import { disciplines } from "@/data/universe";
+import type { CSSProperties } from "react";
+import "@/components/universe.css";
 import Navbar from "@/components/Navbar";
 import FooterSection from "@/components/FooterSection";
 import NotFound from "./NotFound";
@@ -20,7 +23,15 @@ export default function ProjectPage() {
   return (
     <>
       <Navbar />
-      <main id="main-content" className="case-page section-container">
+      <main
+        id="main-content"
+        style={
+          {
+            "--tint": disciplines.find((d) => d.slug === slug)?.color,
+          } as CSSProperties
+        }
+        className="case-page section-container"
+      >
         <Link className="action-link" to="/#work">
           <ArrowLeft size={16} /> All work
         </Link>

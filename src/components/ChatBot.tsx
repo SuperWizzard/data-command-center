@@ -1,3 +1,4 @@
+import { entries, disciplines } from "@/data/universe";
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
@@ -113,7 +114,26 @@ export default function ChatBot() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
           },
-          body: JSON.stringify({ messages: history }),
+          body: JSON.stringify({
+            messages: [
+              {
+                role: "user",
+                content:
+                  "Public portfolio catalogue for reference. Scope to verify means delivery is unconfirmed. A concept is proposed. " +
+                  entries
+                    .map(
+                      (e) =>
+                        disciplines[e.group].short +
+                        " / " +
+                        e.title +
+                        " / " +
+                        e.status,
+                    )
+                    .join("\n"),
+              },
+              ...history,
+            ],
+          }),
           signal: abort.signal,
         },
       );
