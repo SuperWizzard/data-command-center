@@ -150,7 +150,7 @@ const documented = new Set([
   "Recruitment and technical assessments",
   "Injixo/Peopleware to NICE IEX migration",
 ]);
-export const entries = collections.flatMap(
+const catalogue = collections.flatMap(
   ([titles, problem, approach, tools], group) =>
     titles.split("|").map((title) => ({
       title,
@@ -166,3 +166,10 @@ export const entries = collections.flatMap(
           : "Scope to verify",
     })),
 );
+
+export const entries = catalogue
+  .filter((e) => e.status === "Documented experience")
+  .map((e) => ({
+    ...e,
+    status: e.group === 4 ? "Independent project" : "Practical experience",
+  }));

@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { WorkforceVisual } from "@/components/VisualStories";
 import Navbar from "@/components/Navbar";
 import {
@@ -21,6 +22,11 @@ export default function Index() {
         <ProjectUniverse />
         <StoryTimeline />
         <LeadershipSection />
+        <div className="section-container">
+          <Link className="action-link" to="/data-engineering">
+            Database engineering case studies for hiring teams
+          </Link>
+        </div>
         <WorkforceVisual />
         <ThinkingSection />
 

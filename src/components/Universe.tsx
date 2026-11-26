@@ -1,3 +1,9 @@
+import { Forecast, Workflow } from "./VisualStories";
+import { stories } from "@/data/visualStories";
+import { databaseCases } from "@/data/database";
+import dashboard from "@/assets/dashboard-1.png";
+import sql from "@/assets/sql-logo.jpg";
+import "@/pages/refinement.css";
 import { useState, type CSSProperties } from "react";
 import {
   ArrowUpRight,
@@ -5,7 +11,6 @@ import {
   Download,
   MessageCircle,
   Search,
-  ChevronDown,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
@@ -141,6 +146,8 @@ export function ProjectUniverse() {
     [group, G] = useState(""),
     [type, T] = useState(""),
     [status, S] = useState("");
+  const [collection, chooseCollection] = useState(0);
+  const [entry, chooseEntry] = useState("");
   const matches = (s: string) =>
     s.toLowerCase().includes(q.trim().toLowerCase());
   const flags = projects.filter(
@@ -157,6 +164,31 @@ export function ProjectUniverse() {
       (!type || type === "Lab entry") &&
       (!status || status === e.status),
   );
+  const collectionNames = [
+    "AI and knowledge systems",
+    "Workforce intelligence",
+    "Automation and integration",
+    "Database and data engineering",
+    "Backend systems engineering",
+    "Infrastructure and reliability",
+    "Application development",
+    "Leadership and operational strategy",
+  ];
+  const activeGroup = group
+    ? Number(group)
+    : q && labs.length && !labs.some((e) => e.group === collection)
+      ? labs[0].group
+      : collection;
+  const topics = labs.filter((e) => e.group === activeGroup);
+  const topic = topics.find((e) => e.id === entry) ?? topics[0];
+  const showDatabase =
+    (!group || group === "3") &&
+    (!type || type === "Case study") &&
+    (!status || status === "Professional experience") &&
+    matches(
+      "Database engineering SQL Server PostgreSQL BigQuery " +
+        databaseCases.map((c) => c.title).join(" "),
+    );
   return (
     <section id="work" className="section-container universe-section">
       <p className="signal">
@@ -201,70 +233,172 @@ export function ProjectUniverse() {
         >
           <option value="">All statuses</option>
           {Array.from(
-            new Set([...projects, ...entries].map((e) => e.status)),
+            new Set(
+              [
+                ...projects,
+                ...entries,
+                { status: "Professional experience" },
+              ].map((e) => e.status),
+            ),
           ).map((s) => (
             <option key={s}>{s}</option>
           ))}
         </select>
       </div>
-      <div id="case-studies" className="star-cards">
+      <div id="case-studies" className="showcase">
+        {showDatabase && (
+          <article className="showcase-row" style={tint("#34d399")}>
+            <div className="showcase-copy">
+              <small>Data engineering</small>
+              <h3>Database engineering</h3>
+              <p>
+                Connect historical workforce records, trace unexpected results
+                and protect database changes.
+              </p>
+              <Link to="/data-engineering">Explore SQL case studies ↗</Link>
+            </div>
+            <div className="showcase-media">
+              <Workflow
+                title="Synthetic workforce data lineage"
+                steps={[
+                  [
+                    "Roster interval",
+                    "The time and activity recorded for the employee.",
+                  ],
+                  [
+                    "Effective assignment",
+                    "Match the assignment valid on the roster date.",
+                  ],
+                  [
+                    "Reporting output",
+                    "Verify that each interval contributes only once.",
+                  ],
+                ]}
+              />
+            </div>
+          </article>
+        )}
         {flags.map((p) => {
           const d = disciplines.find((x) => x.slug === p.slug)!;
           return (
-            <Link key={p.slug} to={"/projects/" + p.slug} style={tint(d.color)}>
-              <header>
-                <d.icon />
-                <ArrowUpRight />
-              </header>
-              <small>{p.status}</small>
-              <h3>{p.title}</h3>
-              <p>{p.summary}</p>
-              <div className="flow-strip">
-                {p.flow.slice(0, 3).map((s) => (
-                  <span key={s}>{s}</span>
-                ))}
+            <article
+              className="showcase-row"
+              key={p.slug}
+              style={tint(d.color)}
+            >
+              <div className="showcase-copy">
+                <small>{p.status}</small>
+                <h3>{p.title}</h3>
+                <p>{p.summary}</p>
+                <p>{p.tech.slice(0, 3).join(" · ")}</p>
+                <Link to={"/projects/" + p.slug}>Read case study ↗</Link>
               </div>
-              <footer>{p.tech.slice(0, 3).join(" · ")}</footer>
-            </Link>
+              <div className="showcase-media">
+                {p.slug === "digital-ecosystem" ? (
+                  <img
+                    src={dashboard}
+                    alt="Preview from the portfolio’s analytical dashboard gallery"
+                    loading="lazy"
+                  />
+                ) : p.slug === "workforce-automation" ? (
+                  <>
+                    <Forecast />
+                    <Workflow
+                      title="Reporting workflow"
+                      steps={stories[p.slug].slice(2)}
+                    />
+                  </>
+                ) : (
+                  <Workflow
+                    title={
+                      p.slug === "wfm-migration"
+                        ? "Source to target"
+                        : "Conceptual system preview"
+                    }
+                    steps={stories[p.slug].filter(
+                      (_, i, a) =>
+                        i === 0 ||
+                        i === Math.floor(a.length / 2) ||
+                        i === a.length - 1,
+                    )}
+                  />
+                )}
+              </div>
+            </article>
           );
         })}
       </div>
       <div id="lab" className="lab">
         <h3>Engineering Lab</h3>
-        <p>
-          Explore implementation notes by discipline. “Scope to verify” marks
-          topics whose delivery status is unconfirmed.
-        </p>
-        {disciplines.map((d, i) => {
-          const list = labs.filter((e) => e.group === i);
-          return (
-            list.length > 0 && (
-              <details key={d.short} style={tint(d.color)}>
-                <summary>
-                  <d.icon />
-                  {d.name}
-                  <small>{list.length} entries</small>
-                  <ChevronDown />
-                </summary>
-                {list.map((e) => (
-                  <details key={e.id} className="lab-note">
-                    <summary>
-                      {e.title}
-                      <small>{e.status}</small>
-                    </summary>
-                    <p>
-                      {e.problem} {e.approach}
-                    </p>
-                    <p>Related tools · {e.tools}</p>
-                    <Link to={"/projects/" + d.slug}>Related case study ↗</Link>
-                  </details>
+        <p>Explore the technical decisions behind the projects.</p>
+        {!group && (
+          <div className="collection-nav" aria-label="Engineering collections">
+            {collectionNames.map((name, i) => (
+              <button
+                key={name}
+                aria-pressed={i === activeGroup}
+                onClick={() => {
+                  chooseCollection(i);
+                  chooseEntry("");
+                }}
+              >
+                {name}
+              </button>
+            ))}
+          </div>
+        )}
+        <article
+          className="collection-feature"
+          style={tint(disciplines[activeGroup].color)}
+        >
+          <h4>{collectionNames[activeGroup]}</h4>
+          <p>{disciplines[activeGroup].description}</p>
+          {activeGroup === 3 && (
+            <>
+              <img src={sql} width="60" alt="SQL Server" />
+              <Link to="/data-engineering">
+                Open the database engineering showcase ↗
+              </Link>
+            </>
+          )}
+          {topics.length > 0 && (
+            <label>
+              Technical example{" "}
+              <select
+                value={topic?.id}
+                onChange={(e) => chooseEntry(e.target.value)}
+              >
+                {topics.map((e) => (
+                  <option key={e.id} value={e.id}>
+                    {e.title}
+                  </option>
                 ))}
-              </details>
+              </select>
+            </label>
+          )}
+          {topic ? (
+            <div aria-live="polite">
+              <Workflow
+                key={topic.id}
+                title={topic.title}
+                steps={[
+                  ["Problem", topic.problem],
+                  ["Approach", topic.approach],
+                  ["Tools", topic.tools],
+                ]}
+              />
+              <Link to={"/projects/" + disciplines[activeGroup].slug}>
+                Related case study ↗
+              </Link>
+            </div>
+          ) : (
+            activeGroup !== 3 && (
+              <p>No published examples match this collection and filter.</p>
             )
-          );
-        })}
+          )}
+        </article>
       </div>
-      {!flags.length && !labs.length && (
+      {!showDatabase && !flags.length && !labs.length && (
         <p role="status">
           No matches.{" "}
           <button
@@ -301,6 +435,11 @@ export function Ecosystem() {
         <i /> Tools in practice
       </p>
       <h2>Technology ecosystem</h2>
+      <p>
+        <Link to="/data-engineering">
+          Explore database engineering and SQL case studies ↗
+        </Link>
+      </p>
       <div className="tech-console">
         <div>
           {tools.map((t) => (

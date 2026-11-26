@@ -4,7 +4,7 @@ import { chapterFlows, lifecycle, stories } from "@/data/visualStories";
 import nice from "@/assets/nice-logo.png";
 import "./visualStories.css";
 
-function Workflow({
+export function Workflow({
   title,
   steps,
 }: {
@@ -37,7 +37,7 @@ const demand = [74, 102, 137, 151, 129, 110, 90, 64];
 const actual = [81, 97, 152, 146, 139, 105, 94, 58];
 const roster = [10, 13, 16, 19, 18, 15, 12, 10];
 const hours = ["09", "10", "11", "12", "13", "14", "15", "16"];
-function Forecast() {
+export function Forecast() {
   return (
     <figure className="visual-panel">
       <figcaption>
@@ -75,7 +75,71 @@ function Forecast() {
 }
 export function ChapterVisual({ chapter }: { chapter: number }) {
   return (
-    <div className="chapter-visual">
+    <div className={"chapter-visual chapter-visual-" + chapter}>
+      {chapter === 0 && (
+        <figure className="visual-panel">
+          <figcaption>Revenue rose. Operating profit fell.</figcaption>
+          <table>
+            <caption>Synthetic monthly ledger</caption>
+            <thead>
+              <tr>
+                <th>Record</th>
+                <th>Previous</th>
+                <th>Current</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Revenue</td>
+                <td>€12,000</td>
+                <td>€12,500</td>
+              </tr>
+              <tr>
+                <td>Operating costs</td>
+                <td>€8,000</td>
+                <td>€9,000</td>
+              </tr>
+              <tr>
+                <td>Operating result</td>
+                <td>€4,000</td>
+                <td>€3,500</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>Compare cost categories before deciding where to intervene.</p>
+        </figure>
+      )}
+      {chapter === 2 && (
+        <figure className="visual-panel journey-map">
+          <figcaption>Across the Mediterranean</figcaption>
+          <svg
+            viewBox="0 0 320 110"
+            role="img"
+            aria-label="Schematic journey from Egypt northwest to Malta"
+          >
+            <path
+              d="M0 90 40 72 100 82 150 71 190 78 235 68 280 79 320 68V110H0Z"
+              fill="#23374c"
+            />
+            <path
+              d="M250 83Q190 5 76 30"
+              fill="none"
+              stroke="#86e6fc"
+              strokeWidth="2"
+              strokeDasharray="5 5"
+            />
+            <circle cx="250" cy="83" r="5" fill="#a4d8fd" />
+            <circle cx="76" cy="30" r="5" fill="#86e6fc" />
+            <text x="86" y="34" fill="#dff5ff">
+              Malta
+            </text>
+            <text x="258" y="87" fill="#dff5ff">
+              Egypt
+            </text>
+          </svg>
+        </figure>
+      )}
+      {chapter === 3 && <LeadershipVisual />}
       <Workflow
         key={chapter}
         title={

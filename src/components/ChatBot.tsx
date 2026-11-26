@@ -1,3 +1,4 @@
+import { databaseSummary } from "@/data/database";
 import { entries, disciplines } from "@/data/universe";
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
@@ -119,7 +120,9 @@ export default function ChatBot() {
               {
                 role: "user",
                 content:
-                  "Public portfolio catalogue for reference. Scope to verify means delivery is unconfirmed. A concept is proposed. " +
+                  "Public portfolio catalogue for reference. " +
+                  databaseSummary +
+                  " " +
                   entries
                     .map(
                       (e) =>

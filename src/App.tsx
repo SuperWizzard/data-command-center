@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { MotionConfig } from "framer-motion";
 import { lazy, Suspense, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+const DataEngineering = lazy(() => import("./pages/DataEngineering"));
 const ProjectPage = lazy(() => import("./pages/ProjectPage"));
 import { useVisitorTracking } from "./hooks/useVisitorTracking";
 import { projects } from "./data/portfolio";
@@ -78,6 +79,7 @@ const App = () => (
               <Route path="/scheduling" element={<SchedulingPage />} />
               <Route path="/workforce" element={<WorkforcePage />} />
               <Route path="/erp-analysis" element={<ErpAnalysisPage />} />
+              <Route path="/data-engineering" element={<DataEngineering />} />
               <Route path="/projects/:slug" element={<ProjectPage />} />
               <Route path="/admin" element={<AdminPage />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

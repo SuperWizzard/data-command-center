@@ -152,9 +152,6 @@ export function StoryTimeline() {
           className="chapter-content"
           aria-live="polite"
         >
-          <span className="chapter-number" aria-hidden="true">
-            0{active + 1}
-          </span>
           <div className="journey-route">
             <span>Egypt</span>
             <i />
