@@ -1,3 +1,4 @@
+import { ChapterVisual, LeadershipVisual } from "./VisualStories";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import {
@@ -176,6 +177,7 @@ export function StoryTimeline() {
           <h3>{chapters[active].title}</h3>
           <p>{chapters[active].text}</p>
           <div className="chapter-focus">{chapters[active].focus}</div>
+          <ChapterVisual chapter={active} />
           <div className="chapter-paging">
             <button
               onClick={() => setActive(active - 1)}
@@ -234,6 +236,7 @@ export function LeadershipSection() {
                 </div>
               </div>
             </div>
+            <LeadershipVisual />
             <ul className="leadership-principles">
               <li>Connect operational needs with analytical solutions.</li>
               <li>Support professional development and team ownership.</li>

@@ -1,0 +1,252 @@
+.visual-panel {
+  margin: 0;
+  padding: clamp(12px, 2vw, 24px);
+  border: 1px solid #354a64;
+  border-radius: 14px;
+  background: radial-gradient(ellipse at top right, #252444, #101c2e 65%);
+  min-width: 0;
+  color: #e6f1ff;
+}
+.visual-panel h3,
+.visual-panel figcaption {
+  font-size: 1.12rem;
+  font-weight: 650;
+  margin: 0 0 12px;
+}
+.visual-panel p,
+.visual-panel label {
+  color: #bdcde2;
+  font-size: 0.9rem;
+  margin: 8px 0;
+}
+.visual-panel button,
+.visual-panel select {
+  border: 1px solid #54708b;
+  border-radius: 8px;
+  background: #142438;
+  padding: 7px 10px;
+}
+.visual-panel :focus-visible {
+  outline: 2px solid #80e9ff;
+  outline-offset: 3px;
+}
+.workflow ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  list-style: none;
+  padding: 0;
+  margin: 12px 0;
+}
+.workflow li {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.workflow li svg {
+  color: #7495b7;
+}
+.workflow button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  text-align: left;
+}
+.workflow button small {
+  color: #a2c9e8;
+  font: 600 0.7rem monospace;
+}
+.workflow button[aria-pressed="true"] {
+  border-color: var(--tint, #77e4fe);
+  box-shadow: 0 0 12px #76dfff24;
+}
+.workflow button[aria-pressed="true"] small {
+  color: var(--tint, #77e4fe);
+}
+.chapter-visual,
+.case-visual,
+.visual-lab {
+  display: grid;
+  gap: 14px;
+}
+.chapter-visual {
+  margin-block: 18px;
+}
+.chapter-visual .visual-panel {
+  padding: 12px;
+}
+.visual-lab {
+  padding-block: 45px;
+}
+.visual-lab h2 {
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 650;
+  letter-spacing: -0.04em;
+}
+.visual-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.volume-graph {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 5px;
+  text-align: center;
+  margin-top: 16px;
+}
+.volume-graph small {
+  font: clamp(8px, 1vw, 12px) monospace;
+}
+.volume-bars {
+  height: 125px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 3px;
+  background: repeating-linear-gradient(
+    to top,
+    #ffffff20 0 1px,
+    transparent 1px 25px
+  );
+}
+.volume-bars i {
+  width: 27%;
+  background: #64d9fa;
+  border-radius: 3px 3px 0 0;
+}
+.volume-bars i + i {
+  background: #b899fb;
+}
+.chart-legend {
+  display: flex;
+  gap: 12px;
+}
+.chart-legend span:first-child {
+  color: #64d9fa;
+}
+.chart-legend span:last-child {
+  color: #c6abff;
+}
+.visual-panel input[type="range"] {
+  display: block;
+  width: 100%;
+  accent-color: #7bddfa;
+}
+.visual-panel label {
+  display: block;
+}
+.coverage-grid,
+.synthetic-metrics dl {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 5px;
+}
+.coverage-grid div {
+  display: grid;
+  text-align: center;
+  background: #124846;
+  border-radius: 6px;
+  padding: 5px;
+  font-size: 0.8rem;
+}
+.coverage-grid div[data-gap="true"] {
+  background: #632b49;
+}
+.synthetic-metrics dd strong,
+.visual-panel output {
+  display: block;
+  color: #8ceaff;
+  font-weight: 700;
+}
+.synthetic-metrics dd span {
+  font-size: 0.8rem;
+  color: #b7c7dc;
+}
+.case-visual {
+  margin-block: 24px;
+}
+.visual-exoria .visual-panel {
+  background: linear-gradient(125deg, #34182f, #11192f);
+}
+.visual-infrastructure .visual-panel {
+  background: linear-gradient(125deg, #302218, #111b2c);
+}
+.migration-brand {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: #a6e9fa;
+}
+.migration-brand img {
+  width: 80px;
+  max-height: 38px;
+  object-fit: contain;
+  border-radius: 5px;
+  background: #fff;
+  padding: 4px;
+}
+.visual-panel pre {
+  overflow: auto;
+  padding: 10px;
+  background: #070f1d;
+  border-radius: 6px;
+}
+.visual-panel table {
+  width: 100%;
+  text-align: left;
+  border-collapse: collapse;
+}
+.visual-panel th,
+.visual-panel td {
+  padding: 6px;
+  border-bottom: 1px solid #354a64;
+}
+.visual-panel blockquote {
+  margin-top: 10px;
+  border-left: 3px solid #ad9ef9;
+  padding-left: 12px;
+}
+.visual-panel blockquote footer {
+  font-size: 0.8rem;
+  color: #bdb5e1;
+}
+@media (max-width: 650px) {
+  .visual-grid {
+    grid-template-columns: 1fr;
+  }
+  .synthetic-metrics dl {
+    grid-template-columns: 1fr 1fr;
+  }
+  .workflow button {
+    font-size: 0.82rem;
+  }
+  .workflow li svg {
+    display: none;
+  }
+}
+
+.org-nodes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  position: relative;
+  background: linear-gradient(#567994, #567994) center/1px 85% no-repeat;
+}
+.org-nodes button {
+  position: relative;
+  min-width: 0;
+}
+.org-nodes button:first-child,
+.org-nodes button:last-child {
+  grid-column: span 2;
+  justify-self: center;
+}
+.org-nodes button[aria-pressed="true"] {
+  border-color: #6ee7da;
+  color: #9af8ed;
+}
+.org-nodes button:nth-child(2),
+.org-nodes button:nth-child(3) {
+  border-top-color: #6ee7da;
+}

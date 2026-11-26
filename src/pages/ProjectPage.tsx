@@ -1,3 +1,4 @@
+import { CaseStudyVisual } from "@/components/VisualStories";
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { projects } from "@/data/portfolio";
@@ -14,7 +15,7 @@ export default function ProjectPage() {
   if (!project) return <NotFound />;
   const sections = [
     ["The challenge", project.challenge],
-    ["Why it mattered", project.importance],
+    ["The investigation", project.importance],
     ["My approach", project.approach],
     ["What I built or improved", project.built],
     ["Outcomes or current objectives", project.outcome],
@@ -40,22 +41,7 @@ export default function ProjectPage() {
         </p>
         <h1>{project.title}</h1>
         <p className="case-summary">{project.summary}</p>
-        <figure className="architecture-figure">
-          <figcaption>
-            Conceptual process diagram · not an application screenshot
-          </figcaption>
-          <ol>
-            {project.flow.map((step, i) => (
-              <li key={step}>
-                <span>0{i + 1}</span>
-                {step}
-                {i < project.flow.length - 1 && (
-                  <ArrowRight size={18} aria-hidden="true" />
-                )}
-              </li>
-            ))}
-          </ol>
-        </figure>
+        <CaseStudyVisual slug={project.slug} />
         <div className="case-narrative">
           {sections.map(([title, content], i) => (
             <section key={title}>

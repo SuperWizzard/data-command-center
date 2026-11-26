@@ -1,3 +1,4 @@
+import { WorkforceVisual } from "@/components/VisualStories";
 import Navbar from "@/components/Navbar";
 import {
   StoryTimeline,
@@ -20,6 +21,7 @@ export default function Index() {
         <ProjectUniverse />
         <StoryTimeline />
         <LeadershipSection />
+        <WorkforceVisual />
         <ThinkingSection />
 
         <DemonstrationsSection />
